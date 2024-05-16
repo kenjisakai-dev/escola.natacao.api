@@ -1,0 +1,13 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model estado {
+  cod_estado Int    @id @unique(map: "cod_estado_UNIQUE") @default(autoincrement()) @db.UnsignedInt
+  nome       String @unique(map: "nome_UNIQUE") @db.Char(2)
+}
