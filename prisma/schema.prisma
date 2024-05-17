@@ -8,6 +8,16 @@ datasource db {
 }
 
 model estado {
-  cod_estado Int    @id @unique(map: "cod_estado_UNIQUE") @default(autoincrement()) @db.UnsignedInt
-  nome       String @unique(map: "nome_UNIQUE") @db.Char(2)
+  cod_estado Int      @id @unique(map: "cod_estado_UNIQUE") @default(autoincrement()) @db.UnsignedInt
+  nome       String   @unique(map: "nome_UNIQUE") @db.Char(2)
+  cidade     cidade[]
+}
+
+model cidade {
+  cod_cidade Int    @id @default(autoincrement()) @db.UnsignedInt
+  nome       String @db.VarChar(127)
+  cod_estado Int    @db.UnsignedInt
+  estado     estado @relation(fields: [cod_estado], references: [cod_estado], onDelete: NoAction, onUpdate: NoAction, map: "cod_estado_FK")
+
+  @@index([cod_estado], map: "cod_estado_FK")
 }
