@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { StateService } from './state.service';
 import { StateDTO } from './state.dto';
 
@@ -9,6 +9,11 @@ export class StateController {
   @Post('create')
   async create(@Body() state: StateDTO) {
     return await this.stateService.create(state);
+  }
+
+  @Get('findOne')
+  async findOne(@Query('estado') estado: string) {
+    return await this.stateService.findOne(estado);
   }
 
   @Get('findAll')
