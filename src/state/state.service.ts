@@ -11,7 +11,11 @@ export class StateService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async create(state: StateDTO) {
-    const find = await this.findOne(state.nome);
+    const find = await this.prismaService.estado.findFirst({
+      where: {
+        nome: state.nome,
+      },
+    });
 
     if (find) {
       throw new BadRequestException('Estado já existente');
