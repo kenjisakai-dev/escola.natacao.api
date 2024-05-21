@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { StateDTO } from './state.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 
@@ -18,7 +14,7 @@ export class StateService {
     });
 
     if (find) {
-      throw new BadRequestException('Estado já existente');
+      return find;
     }
 
     return await this.prismaService.estado.create({ data: state });
@@ -32,19 +28,13 @@ export class StateService {
     });
 
     if (!state) {
-      throw new NotFoundException('O estado não foi encontrado');
+      return null;
     }
 
     return state;
   }
 
   async findAll() {
-    const states = await this.prismaService.estado.findMany();
-
-    if (!states) {
-      throw new NotFoundException('Nenhum estado foi encontrado');
-    }
-
-    return states;
+    return await this.prismaService.estado.findMany();
   }
 }
