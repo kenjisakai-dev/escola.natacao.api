@@ -31,17 +31,9 @@ export class StudentService {
             complemento,
         } = student;
 
-        const _cpf = await this.prismaService.aluno.findFirst({
-            where: {
-                cpf,
-            },
-        });
+        await this.checkExistingCPF(cpf);
 
-        if (_cpf) {
-            throw new BadRequestException('CPF já cadastrado');
-        }
-
-        const _city = await this.cityService.create({
+        const _city = await this.cityService.getOrCreate({
             nome: cidade,
             estado: estado,
         });
@@ -80,14 +72,8 @@ export class StudentService {
         let data: any = {};
 
         if (cpf) {
-            const findCPF = await this.prismaService.aluno.findFirst({
-                where: {
-                    cpf,
-                },
-            });
-            if (findCPF) {
-                throw new BadRequestException('CPF já cadastrado');
-            }
+            await this.checkExistingCPF(cpf);
+
             data.cpf = cpf;
         }
 
@@ -96,13 +82,12 @@ export class StudentService {
                 'A cidade e estado devem ser passados',
             );
         } else {
-            const _estado = await this.stateService.create({
-                nome: estado,
-            });
-            const _cidade = await this.cityService.create({
+            const _estado = await this.stateService.getOrCreate(estado);
+            const _cidade = await this.cityService.getOrCreate({
                 nome: cidade,
                 estado: _estado.nome,
             });
+
             data.cod_cidade = _cidade.cod_cidade;
         }
 
@@ -144,5 +129,17 @@ export class StudentService {
         }
 
         return students;
+    }
+
+    async checkExistingCPF(cpf: string) {
+        const data = await this.prismaService.aluno.findFirst({
+            where: {
+                cpf,
+            },
+        });
+
+        if (data) {
+            throw new BadRequestException('CPF já cadastrado');
+        }
     }
 }

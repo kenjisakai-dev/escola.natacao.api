@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CityDTO } from './city.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { StateService } from '../state/state.service';
@@ -11,23 +11,14 @@ export class CityService {
     ) {}
 
     async create(city: CityDTO) {
-        const state = await this.stateService.create({ nome: city.estado });
+        const { nome, estado } = city;
 
-        const findCity = await this.prismaService.cidade.findFirst({
-            where: {
-                nome: city.nome,
-                cod_estado: state.cod_estado,
-            },
-        });
-
-        if (findCity) {
-            return { ...findCity, message: 'Cidade já existente' };
-        }
+        const _state = await this.stateService.getOrCreate(estado);
 
         return await this.prismaService.cidade.create({
             data: {
-                nome: city.nome,
-                cod_estado: state.cod_estado,
+                nome,
+                cod_estado: _state.cod_estado,
             },
         });
     }
@@ -40,7 +31,7 @@ export class CityService {
         });
 
         if (!city) {
-            return { city: [], message: 'Cidade não encontrada' };
+            throw new NotFoundException('Cidade não encontrada');
         }
 
         return city;
@@ -50,9 +41,25 @@ export class CityService {
         const cities = await this.prismaService.cidade.findMany();
 
         if (cities.length === 0) {
-            return { cities: [], message: 'Não existe cidades cadastradas' };
+            throw new NotFoundException('Não existe cidades cadastradas');
         }
 
-        return { cities };
+        return cities;
+    }
+
+    async getOrCreate(city: CityDTO) {
+        const { nome, estado } = city;
+
+        const _city = await this.prismaService.cidade.findFirst({
+            where: {
+                nome,
+            },
+        });
+
+        if (!_city) {
+            return await this.create({ nome, estado });
+        }
+
+        return _city;
     }
 }

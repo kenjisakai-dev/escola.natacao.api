@@ -30,11 +30,8 @@ describe('AppController (e2e)', () => {
                 .get('/api/v1/school/state/findAll')
                 .send();
 
-            expect(res.statusCode).toBe(200);
-            expect(res.body).toStrictEqual({
-                states: [],
-                message: 'Não existe estados cadastrados',
-            });
+            expect(res.statusCode).toBe(404);
+            expect(res.body.message).toBe('Não existe estados cadastrados');
         });
 
         it('FindOne NotFound', async () => {
@@ -42,11 +39,8 @@ describe('AppController (e2e)', () => {
                 .get('/api/v1/school/state/findOne')
                 .query({ estado: 'SP' });
 
-            expect(res.statusCode).toBe(200);
-            expect(res.body).toStrictEqual({
-                state: null,
-                message: 'Estado não encontrado',
-            });
+            expect(res.statusCode).toBe(404);
+            expect(res.body.message).toBe('Estado não encontrado');
         });
 
         it('Create', async () => {
@@ -57,29 +51,18 @@ describe('AppController (e2e)', () => {
             expect(res.statusCode).toBe(201);
         });
 
-        it('Create Existing', async () => {
-            const res = await request(app.getHttpServer())
-                .post('/api/v1/school/state/create')
-                .send({ nome: 'sp' });
-
-            expect(res.statusCode).toBe(201);
-            expect(res.body.message).toBe('Estado já existente');
-        });
-
         it('FindAll', async () => {
             const res = await request(app.getHttpServer())
                 .get('/api/v1/school/state/findAll')
                 .send();
 
             expect(res.statusCode).toBe(200);
-            expect(res.body).toStrictEqual({
-                states: [
-                    {
-                        cod_estado: 1,
-                        nome: 'SP',
-                    },
-                ],
-            });
+            expect(res.body).toStrictEqual([
+                {
+                    cod_estado: 1,
+                    nome: 'SP',
+                },
+            ]);
         });
 
         it('FindOne', async () => {
@@ -112,11 +95,8 @@ describe('AppController (e2e)', () => {
                 .get('/api/v1/school/city/findAll')
                 .send();
 
-            expect(res.statusCode).toBe(200);
-            expect(res.body).toStrictEqual({
-                cities: [],
-                message: 'Não existe cidades cadastradas',
-            });
+            expect(res.statusCode).toBe(404);
+            expect(res.body.message).toBe('Não existe cidades cadastradas');
         });
 
         it('FindOne', async () => {
@@ -124,11 +104,8 @@ describe('AppController (e2e)', () => {
                 .get('/api/v1/school/city/findOne')
                 .query({ cidade: 'Osasco' });
 
-            expect(res.statusCode).toBe(200);
-            expect(res.body).toStrictEqual({
-                city: [],
-                message: 'Cidade não encontrada',
-            });
+            expect(res.statusCode).toBe(404);
+            expect(res.body.message).toBe('Cidade não encontrada');
         });
 
         it('Create', async () => {
@@ -144,35 +121,19 @@ describe('AppController (e2e)', () => {
             });
         });
 
-        it('Create Existing', async () => {
-            const res = await request(app.getHttpServer())
-                .post('/api/v1/school/city/create')
-                .send({ nome: 'Osasco', estado: 'SP' });
-
-            expect(res.statusCode).toBe(201);
-            expect(res.body).toStrictEqual({
-                cod_cidade: 1,
-                nome: 'OSASCO',
-                cod_estado: 1,
-                message: 'Cidade já existente',
-            });
-        });
-
         it('FindAll', async () => {
             const res = await request(app.getHttpServer())
                 .get('/api/v1/school/city/findAll')
                 .send();
 
             expect(res.statusCode).toBe(200);
-            expect(res.body).toStrictEqual({
-                cities: [
-                    {
-                        cod_cidade: 1,
-                        nome: 'OSASCO',
-                        cod_estado: 1,
-                    },
-                ],
-            });
+            expect(res.body).toStrictEqual([
+                {
+                    cod_cidade: 1,
+                    nome: 'OSASCO',
+                    cod_estado: 1,
+                },
+            ]);
         });
 
         it('FindOne', async () => {
@@ -313,7 +274,7 @@ describe('AppController (e2e)', () => {
         it('Update', async () => {
             const res = await request(app.getHttpServer())
                 .patch('/api/v1/school/student/update')
-                .query({ nome: 'KENJI SAKAI' })
+                .query({ nome: 'kenji sakai' })
                 .send({
                     cpf: '33344455566',
                     telefone: '11999999999',
@@ -343,7 +304,7 @@ describe('AppController (e2e)', () => {
         it('Update CPF Existing', async () => {
             const res = await request(app.getHttpServer())
                 .patch('/api/v1/school/student/update')
-                .query({ nome: 'KENJI SAKAI' })
+                .query({ nome: 'kenji sakai' })
                 .send({
                     cpf: '33344455566',
                 });
