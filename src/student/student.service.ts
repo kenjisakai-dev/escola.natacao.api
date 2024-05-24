@@ -1,7 +1,7 @@
 import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
+    BadRequestException,
+    Injectable,
+    NotFoundException,
 } from '@nestjs/common';
 import { StudentDTO } from './student.dto';
 import { PrismaService } from '../../prisma/prisma.service';
@@ -11,172 +11,138 @@ import { StudentUpdateDTO } from './student-update.dto';
 
 @Injectable()
 export class StudentService {
-  constructor(
-    private readonly prismaService: PrismaService,
-    private readonly stateService: StateService,
-    private readonly cityService: CityService,
-  ) {}
+    constructor(
+        private readonly prismaService: PrismaService,
+        private readonly stateService: StateService,
+        private readonly cityService: CityService,
+    ) {}
 
-  async create(student: StudentDTO) {
-    const cpf = await this.prismaService.aluno.findFirst({
-      where: {
-        cpf: student.cpf,
-      },
-    });
+    async create(student: StudentDTO) {
+        const {
+            nome,
+            cpf,
+            telefone,
+            cep,
+            estado,
+            cidade,
+            bairro,
+            rua,
+            numero,
+            complemento,
+        } = student;
 
-    if (cpf) {
-      throw new BadRequestException('CPF já cadastrado');
-    }
-
-    let cidade = await this.prismaService.cidade.findFirst({
-      where: {
-        nome: student.cidade,
-      },
-    });
-
-    if (!cidade) {
-      const estado = await this.prismaService.estado.findFirst({
-        where: {
-          nome: student.estado,
-        },
-      });
-
-      if (!estado) {
-        const createEstado = await this.stateService.create({
-          nome: student.estado,
+        const _cpf = await this.prismaService.aluno.findFirst({
+            where: {
+                cpf,
+            },
         });
-        cidade = await this.cityService.create({
-          nome: student.cidade,
-          estado: createEstado.nome,
+
+        if (_cpf) {
+            throw new BadRequestException('CPF já cadastrado');
+        }
+
+        const _city = await this.cityService.create({
+            nome: cidade,
+            estado: estado,
         });
-      } else {
-        cidade = await this.cityService.create({
-          nome: student.cidade,
-          estado: student.estado,
+
+        return await this.prismaService.aluno.create({
+            data: {
+                nome,
+                cpf,
+                telefone,
+                cep,
+                bairro,
+                rua,
+                numero,
+                complemento,
+                cod_cidade: _city.cod_cidade,
+            },
         });
-      }
     }
 
-    const { nome, telefone, cep, bairro, rua, numero } = student;
+    async update(name: string, student: StudentUpdateDTO) {
+        const {
+            nome,
+            cpf,
+            telefone,
+            cep,
+            estado,
+            cidade,
+            bairro,
+            rua,
+            numero,
+            complemento,
+        } = student;
 
-    return await this.prismaService.aluno.create({
-      data: {
-        nome,
-        cpf: student.cpf,
-        telefone,
-        cep,
-        bairro,
-        rua,
-        numero,
-        cod_cidade: cidade.cod_cidade,
-      },
-    });
-  }
+        const _student = await this.findOne(name);
 
-  async update(nameParam: string, student: StudentUpdateDTO) {
-    const {
-      nome,
-      cpf,
-      telefone,
-      cep,
-      estado,
-      cidade,
-      bairro,
-      rua,
-      numero,
-      complemento,
-    } = student;
+        let data: any = {};
 
-    const findStudent = await this.findOne(nameParam);
+        if (cpf) {
+            const findCPF = await this.prismaService.aluno.findFirst({
+                where: {
+                    cpf,
+                },
+            });
+            if (findCPF) {
+                throw new BadRequestException('CPF já cadastrado');
+            }
+            data.cpf = cpf;
+        }
 
-    let studentUpdate: any = {};
-    if (nome) studentUpdate.nome = nome;
-    if (cpf) {
-      const findCPF = await this.prismaService.aluno.findFirst({
-        where: {
-          cpf,
-          NOT: {
-            nome: nameParam,
-          },
-        },
-      });
+        if ((estado || cidade) && (!estado || !cidade)) {
+            throw new BadRequestException(
+                'A cidade e estado devem ser passados',
+            );
+        } else {
+            const _estado = await this.stateService.create({
+                nome: estado,
+            });
+            const _cidade = await this.cityService.create({
+                nome: cidade,
+                estado: _estado.nome,
+            });
+            data.cod_cidade = _cidade.cod_cidade;
+        }
 
-      if (findCPF) {
-        throw new BadRequestException('CPF já cadastrado');
-      }
+        if (nome) data.nome = nome;
+        if (telefone) data.telefone = telefone;
+        if (cep) data.cep = cep;
+        if (bairro) data.bairro = bairro;
+        if (rua) data.rua = rua;
+        if (numero) data.numero = numero;
+        if (complemento) data.complemento = complemento;
 
-      studentUpdate.cpf = cpf;
-    }
-    if (telefone) studentUpdate.telefone = telefone;
-    if (cep) studentUpdate.cep = cep;
-    if (estado || cidade) {
-      if (!estado || !cidade) {
-        throw new BadRequestException(
-          'O estado deve ser passado junto com a cidade',
-        );
-      }
-
-      let findEstado = await this.prismaService.estado.findFirst({
-        where: {
-          nome: estado,
-        },
-      });
-
-      if (!findEstado) {
-        findEstado = await this.stateService.create({
-          nome: estado,
+        return await this.prismaService.aluno.update({
+            where: {
+                cod_aluno: _student.cod_aluno,
+            },
+            data,
         });
-      }
+    }
 
-      let findCidade = await this.prismaService.cidade.findFirst({
-        where: {
-          nome: cidade,
-        },
-      });
-      if (!findCidade) {
-        findCidade = await this.cityService.create({
-          nome: cidade,
-          estado: findEstado.nome,
+    async findOne(nome: string) {
+        const student = await this.prismaService.aluno.findFirst({
+            where: {
+                nome,
+            },
         });
-      }
 
-      studentUpdate.cod_cidade = findCidade.cod_cidade;
+        if (!student) {
+            throw new NotFoundException('Aluno não encontrado');
+        }
+
+        return student;
     }
 
-    if (bairro) studentUpdate.bairro = bairro;
-    if (rua) studentUpdate.rua = rua;
-    if (numero) studentUpdate.numero = numero;
-    if (complemento) studentUpdate.complemento = complemento;
+    async findAll() {
+        const students = await this.prismaService.aluno.findMany();
 
-    return await this.prismaService.aluno.update({
-      where: {
-        cod_aluno: findStudent.cod_aluno,
-      },
-      data: studentUpdate,
-    });
-  }
+        if (students.length === 0) {
+            throw new NotFoundException('Não existe alunos cadastrados');
+        }
 
-  async findOne(nome: string) {
-    const student = await this.prismaService.aluno.findFirst({
-      where: {
-        nome,
-      },
-    });
-
-    if (!student) {
-      throw new NotFoundException('Aluno não encontrado');
+        return students;
     }
-
-    return student;
-  }
-
-  async findAll() {
-    const student = await this.prismaService.aluno.findMany();
-
-    if (student.length === 0) {
-      throw new NotFoundException('Não existe alunos cadastrados');
-    }
-
-    return student;
-  }
 }

@@ -41,6 +41,6 @@ export class StateService {
             return { states: [], message: 'Não existe estados cadastrados' };
         }
 
-        return states;
+        return { states };
     }
 }
