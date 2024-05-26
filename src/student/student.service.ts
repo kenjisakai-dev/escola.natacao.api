@@ -61,7 +61,7 @@ export class StudentService {
         }
     }
 
-    async update(name: string, student: StudentUpdateDTO) {
+    async update(nome: string, student: StudentUpdateDTO) {
         let { cpf, cep, estado, cidade, bairro, rua, numero } = student;
 
         if (cpf) {
@@ -88,7 +88,7 @@ export class StudentService {
             }
         }
 
-        const { cod_aluno } = await this.findOne(name ?? '');
+        const { cod_aluno } = await this.findOne(nome ?? '');
 
         return await this.prismaService.aluno.update({
             where: {
