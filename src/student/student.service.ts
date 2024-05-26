@@ -5,112 +5,103 @@ import {
 } from '@nestjs/common';
 import { StudentDTO } from './student.dto';
 import { PrismaService } from '../../prisma/prisma.service';
-import { StateService } from '../state/state.service';
-import { CityService } from '../city/city.service';
 import { StudentUpdateDTO } from './student-update.dto';
+import { getAddressByCEP } from '../helpers/address';
 
 @Injectable()
 export class StudentService {
-    constructor(
-        private readonly prismaService: PrismaService,
-        private readonly stateService: StateService,
-        private readonly cityService: CityService,
-    ) {}
+    constructor(private readonly prismaService: PrismaService) {}
 
     async create(student: StudentDTO) {
-        const {
-            nome,
-            cpf,
-            telefone,
-            cep,
-            estado,
-            cidade,
-            bairro,
-            rua,
-            numero,
-            complemento,
-        } = student;
-
-        await this.checkExistingCPF(cpf);
-
-        const _city = await this.cityService.getOrCreate({
-            nome: cidade,
-            estado: estado,
-        });
-
-        return await this.prismaService.aluno.create({
-            data: {
+        try {
+            let {
                 nome,
                 cpf,
                 telefone,
                 cep,
+                estado,
+                cidade,
                 bairro,
                 rua,
                 numero,
                 complemento,
-                cod_cidade: _city.cod_cidade,
-            },
-        });
+            } = student;
+
+            const addres = await getAddressByCEP(cep);
+
+            if (!addres?.erro) {
+                estado = addres?.uf.toUpperCase();
+                cidade = addres?.localidade.toUpperCase();
+                bairro = addres?.bairro.toUpperCase();
+                rua = addres?.logradouro.toUpperCase();
+            } else if (!estado || !cidade || !bairro || !rua) {
+                throw new BadRequestException(
+                    'CEP Inválido, será necessário passar o CEP, estado, cidade, bairro e rua',
+                );
+            }
+
+            await this.checkExistingCPF(cpf);
+
+            return await this.prismaService.aluno.create({
+                data: {
+                    nome,
+                    cpf,
+                    telefone,
+                    cep,
+                    estado,
+                    cidade,
+                    bairro,
+                    rua,
+                    numero,
+                    complemento,
+                },
+            });
+        } catch (err) {
+            throw new BadRequestException(err?.response);
+        }
     }
 
-    async update(name: string, student: StudentUpdateDTO) {
-        const {
-            nome,
-            cpf,
-            telefone,
-            cep,
-            estado,
-            cidade,
-            bairro,
-            rua,
-            numero,
-            complemento,
-        } = student;
-
-        const _student = await this.findOne(name);
-
-        let data: any = {};
+    async update(nome: string, student: StudentUpdateDTO) {
+        let { cpf, cep, estado, cidade, bairro, rua, numero } = student;
 
         if (cpf) {
             await this.checkExistingCPF(cpf);
-
-            data.cpf = cpf;
+            student.cpf = cpf;
         }
 
-        if ((estado || cidade) && (!estado || !cidade)) {
-            throw new BadRequestException(
-                'A cidade e estado devem ser passados',
-            );
-        } else {
-            const _estado = await this.stateService.getOrCreate(estado);
-            const _cidade = await this.cityService.getOrCreate({
-                nome: cidade,
-                estado: _estado.nome,
-            });
+        if (cep || estado || cidade || bairro || rua || numero) {
+            if (!cep || !numero) {
+                throw new BadRequestException('CEP e número é obrigatório');
+            } else {
+                const addres = await getAddressByCEP(cep);
 
-            data.cod_cidade = _cidade.cod_cidade;
+                if (!addres?.erro) {
+                    student.estado = addres?.uf.toUpperCase();
+                    student.cidade = addres?.localidade.toUpperCase();
+                    student.bairro = addres?.bairro.toUpperCase();
+                    student.rua = addres?.logradouro.toUpperCase();
+                } else if (!estado || !cidade || !bairro || !rua) {
+                    throw new BadRequestException(
+                        'CEP Inválido, será necessário passar o CEP, estado, cidade, bairro, rua e número',
+                    );
+                }
+            }
         }
 
-        if (nome) data.nome = nome;
-        if (telefone) data.telefone = telefone;
-        if (cep) data.cep = cep;
-        if (bairro) data.bairro = bairro;
-        if (rua) data.rua = rua;
-        if (numero) data.numero = numero;
-        if (complemento) data.complemento = complemento;
+        const { cod_aluno } = await this.findOne(nome ?? '');
 
         return await this.prismaService.aluno.update({
             where: {
-                cod_aluno: _student.cod_aluno,
+                cod_aluno,
             },
-            data,
+            data: student,
         });
     }
 
     async findOne(nome: string) {
         const student = await this.prismaService.aluno.findFirst({
             where: {
-                nome,
+                nome: nome ?? '',
             },
         });
 

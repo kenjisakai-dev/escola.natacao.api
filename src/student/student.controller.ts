@@ -17,12 +17,12 @@ export class StudentController {
         @Body() student: StudentUpdateDTO,
         @Query('nome') nome: string,
     ) {
-        return await this.studentService.update(nome ?? '', student);
+        return await this.studentService.update(nome, student);
     }
 
     @Get('findOne')
     async findOne(@Query('nome') nome: string) {
-        return await this.studentService.findOne(nome ?? '');
+        return await this.studentService.findOne(nome);
     }
 
     @Get('findAll')
