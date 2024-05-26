@@ -1,44 +1,56 @@
 import { Transform } from 'class-transformer';
-import { IsOptional, IsString, Length } from 'class-validator';
+import { IsDefined, IsOptional, IsString, Length } from 'class-validator';
 
 export class StudentDTO {
     @Transform(({ value }) => value.toUpperCase())
-    @IsString()
+    @IsString({ message: 'O nome deve ser passado nesse campo' })
+    @IsDefined({ message: 'Nome é obrigatório' })
     nome: string;
 
-    @IsString()
+    @Transform(({ value }) => value.toString())
+    @IsDefined({ message: 'CPF é obrigatório' })
     cpf: string;
 
-    @IsString()
+    @Transform(({ value }) => value.toString())
+    @IsDefined({ message: 'Telefone é obrigatório' })
     telefone: string;
 
-    @Transform(({ value }) => value.toUpperCase())
-    @IsString()
-    rua: string;
-
-    @IsString()
-    numero: string;
-
-    @Transform(({ value }) => value.toUpperCase())
-    @IsOptional()
-    @IsString()
-    complemento?: string;
-
-    @Transform(({ value }) => value.toUpperCase())
-    @IsString()
-    bairro: string;
-
-    @IsString()
+    @Transform(({ value }) => value.toString())
+    @Length(8, 8, {
+        message: 'O CEP deve conter 8 números',
+    })
+    @IsDefined({ message: 'CEP é obrigatório' })
     cep: string;
 
     @Transform(({ value }) => value.toUpperCase())
-    @IsString()
-    cidade: string;
+    @Length(2, 2, {
+        message: 'O estado deve ser passado no formato UF',
+    })
+    @IsString({ message: 'O estado deve ser passado nesse campo' })
+    @IsOptional()
+    estado?: string;
 
     @Transform(({ value }) => value.toUpperCase())
-    @Length(2, 2, {
-        message: 'A sigla do estado deve ter 2 caracteres',
-    })
-    @IsString()
-    estado: string;
+    @IsString({ message: 'A cidade deve ser passado nesse campo' })
+    @IsOptional()
+    cidade?: string;
+
+    @Transform(({ value }) => value.toUpperCase())
+    @IsString({ message: 'O bairro deve ser passado nesse campo' })
+    @IsOptional()
+    bairro?: string;
+
+    @Transform(({ value }) => value.toUpperCase())
+    @IsString({ message: 'A rua deve ser passado nesse campo' })
+    @IsOptional()
+    rua?: string;
+
+    @Transform(({ value }) => value.toString().toUpperCase())
+    @IsDefined({ message: 'Número é obrigatório' })
+    numero: string;
+
+    @Transform(({ value }) => value.toUpperCase())
+    @IsString({ message: 'O complemento deve ser passado nesse campo' })
+    @IsOptional()
+    complemento?: string;
 }

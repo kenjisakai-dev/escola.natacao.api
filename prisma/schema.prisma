@@ -7,34 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model estado {
-  cod_estado Int      @id @unique(map: "cod_estado_UNIQUE") @default(autoincrement()) @db.UnsignedInt
-  nome       String   @unique(map: "nome_UNIQUE") @db.Char(2)
-  cidade     cidade[]
-}
-
-model cidade {
-  cod_cidade Int     @id @default(autoincrement()) @db.UnsignedInt
-  nome       String  @db.VarChar(127)
-  cod_estado Int     @db.UnsignedInt
-  aluno      aluno[]
-  estado     estado  @relation(fields: [cod_estado], references: [cod_estado], onDelete: NoAction, onUpdate: NoAction, map: "cod_estado_FK")
-
-  @@index([cod_estado], map: "cod_estado_FK")
-}
-
 model aluno {
   cod_aluno   Int     @id @default(autoincrement()) @db.UnsignedInt
   nome        String  @db.VarChar(127)
   cpf         String  @unique(map: "cpf_UNIQUE") @db.VarChar(127)
   telefone    String  @db.VarChar(127)
+  cep         String  @db.VarChar(127)
+  estado      String  @db.VarChar(127)
+  cidade      String  @db.VarChar(127)
+  bairro      String  @db.VarChar(127)
   rua         String  @db.VarChar(127)
   numero      String  @db.VarChar(127)
   complemento String? @db.VarChar(127)
-  bairro      String  @db.VarChar(127)
-  cep         String  @db.VarChar(127)
-  cod_cidade  Int     @db.UnsignedInt
-  cidade      cidade  @relation(fields: [cod_cidade], references: [cod_cidade], onDelete: NoAction, onUpdate: NoAction, map: "cod_cidade_FK")
-
-  @@index([cod_cidade], map: "cod_cidade_FK")
 }

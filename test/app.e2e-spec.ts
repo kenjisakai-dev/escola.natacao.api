@@ -20,149 +20,12 @@ describe('AppController (e2e)', () => {
         await app.init();
     });
 
-    beforeEach(async () => {
+    afterEach(async () => {
         await app.close();
     });
 
-    describe('State', () => {
-        it('FindAll Empty', async () => {
-            const res = await request(app.getHttpServer())
-                .get('/api/v1/school/state/findAll')
-                .send();
-
-            expect(res.statusCode).toBe(404);
-            expect(res.body.message).toBe('Não existe estados cadastrados');
-        });
-
-        it('FindOne NotFound', async () => {
-            const res = await request(app.getHttpServer())
-                .get('/api/v1/school/state/findOne')
-                .query({ estado: 'SP' });
-
-            expect(res.statusCode).toBe(404);
-            expect(res.body.message).toBe('Estado não encontrado');
-        });
-
-        it('Create', async () => {
-            const res = await request(app.getHttpServer())
-                .post('/api/v1/school/state/create')
-                .send({ nome: 'sp' });
-
-            expect(res.statusCode).toBe(201);
-        });
-
-        it('FindAll', async () => {
-            const res = await request(app.getHttpServer())
-                .get('/api/v1/school/state/findAll')
-                .send();
-
-            expect(res.statusCode).toBe(200);
-            expect(res.body).toStrictEqual([
-                {
-                    cod_estado: 1,
-                    nome: 'SP',
-                },
-            ]);
-        });
-
-        it('FindOne', async () => {
-            const res = await request(app.getHttpServer())
-                .get('/api/v1/school/state/findOne')
-                .query({ estado: 'SP' });
-
-            expect(res.statusCode).toBe(200);
-            expect(res.body).toStrictEqual({
-                cod_estado: 1,
-                nome: 'SP',
-            });
-        });
-
-        it('Create Invalid', async () => {
-            const res = await request(app.getHttpServer())
-                .post('/api/v1/school/state/create')
-                .send({ nome: 'São Paulo' });
-
-            expect(res.statusCode).toBe(400);
-            expect(res.body.message).toStrictEqual([
-                'A sigla do estado deve ter 2 caracteres',
-            ]);
-        });
-    });
-
-    describe('City', () => {
-        it('FindAll', async () => {
-            const res = await request(app.getHttpServer())
-                .get('/api/v1/school/city/findAll')
-                .send();
-
-            expect(res.statusCode).toBe(404);
-            expect(res.body.message).toBe('Não existe cidades cadastradas');
-        });
-
-        it('FindOne', async () => {
-            const res = await request(app.getHttpServer())
-                .get('/api/v1/school/city/findOne')
-                .query({ cidade: 'Osasco' });
-
-            expect(res.statusCode).toBe(404);
-            expect(res.body.message).toBe('Cidade não encontrada');
-        });
-
-        it('Create', async () => {
-            const res = await request(app.getHttpServer())
-                .post('/api/v1/school/city/create')
-                .send({ nome: 'Osasco', estado: 'SP' });
-
-            expect(res.statusCode).toBe(201);
-            expect(res.body).toStrictEqual({
-                cod_cidade: 1,
-                nome: 'OSASCO',
-                cod_estado: 1,
-            });
-        });
-
-        it('FindAll', async () => {
-            const res = await request(app.getHttpServer())
-                .get('/api/v1/school/city/findAll')
-                .send();
-
-            expect(res.statusCode).toBe(200);
-            expect(res.body).toStrictEqual([
-                {
-                    cod_cidade: 1,
-                    nome: 'OSASCO',
-                    cod_estado: 1,
-                },
-            ]);
-        });
-
-        it('FindOne', async () => {
-            const res = await request(app.getHttpServer())
-                .get('/api/v1/school/city/findOne')
-                .query({ cidade: 'Osasco' });
-
-            expect(res.statusCode).toBe(200);
-            expect(res.body).toStrictEqual({
-                cod_cidade: 1,
-                nome: 'OSASCO',
-                cod_estado: 1,
-            });
-        });
-
-        it('Create Invalid', async () => {
-            const res = await request(app.getHttpServer())
-                .post('/api/v1/school/city/create')
-                .send({ nome: 'Osasco', estado: 'São Paulo' });
-
-            expect(res.statusCode).toBe(400);
-            expect(res.body.message).toStrictEqual([
-                'A sigla do estado deve ter 2 caracteres',
-            ]);
-        });
-    });
-
     describe('Student', () => {
-        it('FindAll', async () => {
+        it('FindAll empty', async () => {
             const res = await request(app.getHttpServer())
                 .get('/api/v1/school/student/findAll')
                 .send();
@@ -171,7 +34,7 @@ describe('AppController (e2e)', () => {
             expect(res.body.message).toBe('Não existe alunos cadastrados');
         });
 
-        it('FindOne', async () => {
+        it('FindOne notFound', async () => {
             const res = await request(app.getHttpServer())
                 .get('/api/v1/school/student/findOne')
                 .query({ nome: 'Kenji Sakai' });
@@ -187,11 +50,7 @@ describe('AppController (e2e)', () => {
                     nome: 'Kenji Sakai',
                     cpf: '00000000000',
                     telefone: '11988888888',
-                    cep: '06220070',
-                    estado: 'SP',
-                    cidade: 'Osasco',
-                    bairro: 'Munhoz',
-                    rua: 'abc',
+                    cep: '06230070',
                     numero: '10',
                 });
 
@@ -201,10 +60,55 @@ describe('AppController (e2e)', () => {
                 nome: 'KENJI SAKAI',
                 cpf: '00000000000',
                 telefone: '11988888888',
-                cep: '06220070',
-                cod_cidade: 1,
-                bairro: 'MUNHOZ',
-                rua: 'ABC',
+                cep: '06230070',
+                estado: 'SP',
+                cidade: 'OSASCO',
+                bairro: 'PIRATININGA',
+                rua: 'RUA BENEDITO DE MORAES',
+                numero: '10',
+                complemento: null,
+            });
+        });
+
+        it('FindAll', async () => {
+            const res = await request(app.getHttpServer())
+                .get('/api/v1/school/student/findAll')
+                .send();
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body).toStrictEqual([
+                {
+                    cod_aluno: 1,
+                    nome: 'KENJI SAKAI',
+                    cpf: '00000000000',
+                    telefone: '11988888888',
+                    cep: '06230070',
+                    estado: 'SP',
+                    cidade: 'OSASCO',
+                    bairro: 'PIRATININGA',
+                    rua: 'RUA BENEDITO DE MORAES',
+                    numero: '10',
+                    complemento: null,
+                },
+            ]);
+        });
+
+        it('FindOne', async () => {
+            const res = await request(app.getHttpServer())
+                .get('/api/v1/school/student/findOne')
+                .query({ nome: 'Kenji Sakai' });
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body).toStrictEqual({
+                cod_aluno: 1,
+                nome: 'KENJI SAKAI',
+                cpf: '00000000000',
+                telefone: '11988888888',
+                cep: '06230070',
+                estado: 'SP',
+                cidade: 'OSASCO',
+                bairro: 'PIRATININGA',
+                rua: 'RUA BENEDITO DE MORAES',
                 numero: '10',
                 complemento: null,
             });
@@ -229,44 +133,50 @@ describe('AppController (e2e)', () => {
             expect(res.body.message).toBe('CPF já cadastrado');
         });
 
-        it('FindAll', async () => {
+        it('Create CEP invalid', async () => {
             const res = await request(app.getHttpServer())
-                .get('/api/v1/school/student/findAll')
-                .send();
-
-            expect(res.statusCode).toBe(200);
-            expect(res.body).toStrictEqual([
-                {
-                    cod_aluno: 1,
-                    nome: 'KENJI SAKAI',
+                .post('/api/v1/school/student/create')
+                .send({
+                    nome: 'Kenji Sakai',
                     cpf: '00000000000',
                     telefone: '11988888888',
-                    cep: '06220070',
-                    cod_cidade: 1,
-                    bairro: 'MUNHOZ',
-                    rua: 'ABC',
+                    cep: '06230077',
                     numero: '10',
-                    complemento: null,
-                },
-            ]);
+                });
+
+            expect(res.statusCode).toBe(400);
+            expect(res.body.message).toBe(
+                'CEP Inválido, será necessário passar o CEP, estado, cidade, bairro e rua',
+            );
         });
 
-        it('FindOne', async () => {
+        it('Create CEP invalid with address data Valid', async () => {
             const res = await request(app.getHttpServer())
-                .get('/api/v1/school/student/findOne')
-                .query({ nome: 'Kenji Sakai' });
+                .post('/api/v1/school/student/create')
+                .send({
+                    nome: 'Carla Sakai',
+                    cpf: '44444444444',
+                    telefone: '11955555555',
+                    cep: '06230077',
+                    estado: 'SP',
+                    cidade: 'Osasco',
+                    bairro: 'Presidente Altino',
+                    rua: 'Rua Maria Carmem Panica',
+                    numero: '23',
+                });
 
-            expect(res.statusCode).toBe(200);
+            expect(res.statusCode).toBe(201);
             expect(res.body).toStrictEqual({
-                cod_aluno: 1,
-                nome: 'KENJI SAKAI',
-                cpf: '00000000000',
-                telefone: '11988888888',
-                cep: '06220070',
-                cod_cidade: 1,
-                bairro: 'MUNHOZ',
-                rua: 'ABC',
-                numero: '10',
+                cod_aluno: 2,
+                nome: 'CARLA SAKAI',
+                cpf: '44444444444',
+                telefone: '11955555555',
+                cep: '06230077',
+                estado: 'SP',
+                cidade: 'OSASCO',
+                bairro: 'PRESIDENTE ALTINO',
+                rua: 'RUA MARIA CARMEM PANICA',
+                numero: '23',
                 complemento: null,
             });
         });
@@ -276,13 +186,9 @@ describe('AppController (e2e)', () => {
                 .patch('/api/v1/school/student/update')
                 .query({ nome: 'kenji sakai' })
                 .send({
-                    cpf: '33344455566',
-                    telefone: '11999999999',
-                    cep: '01230080',
-                    estado: 'SP',
-                    cidade: 'Novo Osasco',
-                    bairro: 'Mapa Alameda dos Jamaris',
-                    rua: 'Alagoa',
+                    cpf: '99999999999',
+                    telefone: '11922222222',
+                    cep: '06280070',
                     numero: '15',
                 });
 
@@ -290,13 +196,71 @@ describe('AppController (e2e)', () => {
             expect(res.body).toStrictEqual({
                 cod_aluno: 1,
                 nome: 'KENJI SAKAI',
-                cpf: '33344455566',
-                telefone: '11999999999',
-                cep: '01230080',
-                cod_cidade: 2,
-                bairro: 'MAPA ALAMEDA DOS JAMARIS',
-                rua: 'ALAGOA',
+                cpf: '99999999999',
+                telefone: '11922222222',
+                cep: '06280070',
+                estado: 'SP',
+                cidade: 'OSASCO',
+                bairro: 'AYROSA',
+                rua: 'RUA AVINHADO',
                 numero: '15',
+                complemento: null,
+            });
+        });
+
+        it('Update CEP without cep or number', async () => {
+            const res = await request(app.getHttpServer())
+                .patch('/api/v1/school/student/update')
+                .query({ nome: 'kenji sakai' })
+                .send({
+                    cidade: 'Osasco',
+                });
+
+            expect(res.statusCode).toBe(400);
+            expect(res.body.message).toBe('CEP e número é obrigatório');
+        });
+
+        it('Update CEP invalid', async () => {
+            const res = await request(app.getHttpServer())
+                .patch('/api/v1/school/student/update')
+                .query({ nome: 'kenji sakai' })
+                .send({
+                    cep: '06290077',
+                    numero: '34',
+                });
+
+            expect(res.statusCode).toBe(400);
+            expect(res.body.message).toBe(
+                'CEP Inválido, será necessário passar o CEP, estado, cidade, bairro, rua e número',
+            );
+        });
+
+        it('Update CEP invalid with address data Valid', async () => {
+            const res = await request(app.getHttpServer())
+                .patch('/api/v1/school/student/update')
+                .query({ nome: 'Carla Sakai' })
+                .send({
+                    nome: 'Carla Sakai',
+                    cep: '06220077',
+                    estado: 'SP',
+                    cidade: 'Osasco',
+                    bairro: 'ROCHDATE',
+                    rua: 'RUA SERGIPE',
+                    numero: '102',
+                });
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body).toStrictEqual({
+                cod_aluno: 2,
+                nome: 'CARLA SAKAI',
+                cpf: '44444444444',
+                telefone: '11955555555',
+                cep: '06220077',
+                estado: 'SP',
+                cidade: 'OSASCO',
+                bairro: 'ROCHDATE',
+                rua: 'RUA SERGIPE',
+                numero: '102',
                 complemento: null,
             });
         });
@@ -306,31 +270,27 @@ describe('AppController (e2e)', () => {
                 .patch('/api/v1/school/student/update')
                 .query({ nome: 'kenji sakai' })
                 .send({
-                    cpf: '33344455566',
+                    cpf: '99999999999',
                 });
 
             expect(res.statusCode).toBe(400);
             expect(res.body.message).toBe('CPF já cadastrado');
         });
 
-        it('Create Invalid', async () => {
+        it('Create DTO Invalid', async () => {
             const res = await request(app.getHttpServer())
                 .post('/api/v1/school/student/create')
-                .send({
-                    nome: 'Kenji Sakai',
-                    cpf: '00000000000',
-                    telefone: '11988888888',
-                    cep: '06220070',
-                    estado: 'São Paulo',
-                    cidade: 'Osasco',
-                    bairro: 'Munhoz',
-                    rua: 'abc',
-                    numero: '10',
-                });
+                .send();
 
             expect(res.statusCode).toBe(400);
             expect(res.body.message).toStrictEqual([
-                'A sigla do estado deve ter 2 caracteres',
+                'Nome é obrigatório',
+                'O nome deve ser passado nesse campo',
+                'CPF é obrigatório',
+                'Telefone é obrigatório',
+                'CEP é obrigatório',
+                'O CEP deve conter 8 números',
+                'Número é obrigatório',
             ]);
         });
     });
