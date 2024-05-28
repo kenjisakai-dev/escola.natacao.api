@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
+import { compileFunction } from 'vm';
 
 describe('AppController (e2e)', () => {
     let app: INestApplication;
@@ -20,7 +21,7 @@ describe('AppController (e2e)', () => {
         await app.init();
     });
 
-    afterEach(async () => {
+    afterAll(async () => {
         await app.close();
     });
 
@@ -37,7 +38,7 @@ describe('AppController (e2e)', () => {
         it('FindOne notFound', async () => {
             const res = await request(app.getHttpServer())
                 .get('/api/v1/school/student/findOne')
-                .query({ nome: 'Kenji Sakai' });
+                .query({ nome: 'Alessandra Lavínia Jaqueline da Rosa' });
 
             expect(res.statusCode).toBe(404);
             expect(res.body.message).toBe('Aluno não encontrado');
@@ -47,25 +48,25 @@ describe('AppController (e2e)', () => {
             const res = await request(app.getHttpServer())
                 .post('/api/v1/school/student/create')
                 .send({
-                    nome: 'Kenji Sakai',
-                    cpf: '00000000000',
-                    telefone: '11988888888',
-                    cep: '06230070',
-                    numero: '10',
+                    nome: 'Alessandra Lavínia Jaqueline da Rosa',
+                    cpf: '03094550819',
+                    telefone: '11986024259',
+                    cep: '06090030',
+                    numero: '421',
                 });
 
             expect(res.statusCode).toBe(201);
             expect(res.body).toStrictEqual({
                 cod_aluno: 1,
-                nome: 'KENJI SAKAI',
-                cpf: '00000000000',
-                telefone: '11988888888',
-                cep: '06230070',
+                nome: 'ALESSANDRA LAVÍNIA JAQUELINE DA ROSA',
+                cpf: '03094550819',
+                telefone: '11986024259',
+                cep: '06090030',
                 estado: 'SP',
                 cidade: 'OSASCO',
-                bairro: 'PIRATININGA',
-                rua: 'RUA BENEDITO DE MORAES',
-                numero: '10',
+                bairro: 'CENTRO',
+                rua: 'RUA AVELINO LOPES',
+                numero: '421',
                 complemento: null,
             });
         });
@@ -79,15 +80,15 @@ describe('AppController (e2e)', () => {
             expect(res.body).toStrictEqual([
                 {
                     cod_aluno: 1,
-                    nome: 'KENJI SAKAI',
-                    cpf: '00000000000',
-                    telefone: '11988888888',
-                    cep: '06230070',
+                    nome: 'ALESSANDRA LAVÍNIA JAQUELINE DA ROSA',
+                    cpf: '03094550819',
+                    telefone: '11986024259',
+                    cep: '06090030',
                     estado: 'SP',
                     cidade: 'OSASCO',
-                    bairro: 'PIRATININGA',
-                    rua: 'RUA BENEDITO DE MORAES',
-                    numero: '10',
+                    bairro: 'CENTRO',
+                    rua: 'RUA AVELINO LOPES',
+                    numero: '421',
                     complemento: null,
                 },
             ]);
@@ -96,20 +97,20 @@ describe('AppController (e2e)', () => {
         it('FindOne', async () => {
             const res = await request(app.getHttpServer())
                 .get('/api/v1/school/student/findOne')
-                .query({ nome: 'Kenji Sakai' });
+                .query({ nome: 'Alessandra Lavínia Jaqueline da Rosa' });
 
             expect(res.statusCode).toBe(200);
             expect(res.body).toStrictEqual({
                 cod_aluno: 1,
-                nome: 'KENJI SAKAI',
-                cpf: '00000000000',
-                telefone: '11988888888',
-                cep: '06230070',
+                nome: 'ALESSANDRA LAVÍNIA JAQUELINE DA ROSA',
+                cpf: '03094550819',
+                telefone: '11986024259',
+                cep: '06090030',
                 estado: 'SP',
                 cidade: 'OSASCO',
-                bairro: 'PIRATININGA',
-                rua: 'RUA BENEDITO DE MORAES',
-                numero: '10',
+                bairro: 'CENTRO',
+                rua: 'RUA AVELINO LOPES',
+                numero: '421',
                 complemento: null,
             });
         });
@@ -118,30 +119,41 @@ describe('AppController (e2e)', () => {
             const res = await request(app.getHttpServer())
                 .post('/api/v1/school/student/create')
                 .send({
-                    nome: 'Kenji Sakai',
-                    cpf: '00000000000',
-                    telefone: '11988888888',
-                    cep: '06220070',
-                    estado: 'SP',
-                    cidade: 'Osasco',
-                    bairro: 'Munhoz',
-                    rua: 'abc',
-                    numero: '10',
+                    nome: 'Ayla Aurora Francisca Fogaça',
+                    cpf: '03094550819',
+                    telefone: '11994028816',
+                    cep: '06090020',
+                    numero: '276',
                 });
 
             expect(res.statusCode).toBe(400);
             expect(res.body.message).toBe('CPF já cadastrado');
         });
 
+        it('Create CPF invalid', async () => {
+            const res = await request(app.getHttpServer())
+                .post('/api/v1/school/student/create')
+                .send({
+                    nome: 'Ayla Aurora Francisca Fogaça',
+                    cpf: '00000000000',
+                    telefone: '11994028816',
+                    cep: '06090020',
+                    numero: '276',
+                });
+
+            expect(res.statusCode).toBe(400);
+            expect(res.body.message).toBe('CPF inválido');
+        });
+
         it('Create CEP invalid', async () => {
             const res = await request(app.getHttpServer())
                 .post('/api/v1/school/student/create')
                 .send({
-                    nome: 'Kenji Sakai',
-                    cpf: '00000000000',
-                    telefone: '11988888888',
-                    cep: '06230077',
-                    numero: '10',
+                    nome: 'Ayla Aurora Francisca Fogaça',
+                    cpf: '32645840850',
+                    telefone: '11994028816',
+                    cep: '06090022',
+                    numero: '276',
                 });
 
             expect(res.statusCode).toBe(400);
@@ -154,29 +166,29 @@ describe('AppController (e2e)', () => {
             const res = await request(app.getHttpServer())
                 .post('/api/v1/school/student/create')
                 .send({
-                    nome: 'Carla Sakai',
-                    cpf: '44444444444',
-                    telefone: '11955555555',
-                    cep: '06230077',
+                    nome: 'Ayla Aurora Francisca Fogaça',
+                    cpf: '32645840850',
+                    telefone: '11994028816',
+                    cep: '06090022',
                     estado: 'SP',
                     cidade: 'Osasco',
-                    bairro: 'Presidente Altino',
-                    rua: 'Rua Maria Carmem Panica',
-                    numero: '23',
+                    bairro: 'Centro',
+                    rua: 'Avenida dos Autonomistas',
+                    numero: '276',
                 });
 
             expect(res.statusCode).toBe(201);
             expect(res.body).toStrictEqual({
                 cod_aluno: 2,
-                nome: 'CARLA SAKAI',
-                cpf: '44444444444',
-                telefone: '11955555555',
-                cep: '06230077',
+                nome: 'AYLA AURORA FRANCISCA FOGAÇA',
+                cpf: '32645840850',
+                telefone: '11994028816',
+                cep: '06090022',
                 estado: 'SP',
                 cidade: 'OSASCO',
-                bairro: 'PRESIDENTE ALTINO',
-                rua: 'RUA MARIA CARMEM PANICA',
-                numero: '23',
+                bairro: 'CENTRO',
+                rua: 'AVENIDA DOS AUTONOMISTAS',
+                numero: '276',
                 complemento: null,
             });
         });
@@ -184,36 +196,55 @@ describe('AppController (e2e)', () => {
         it('Update', async () => {
             const res = await request(app.getHttpServer())
                 .patch('/api/v1/school/student/update')
-                .query({ nome: 'kenji sakai' })
+                .query({ nome: 'Ayla Aurora Francisca Fogaça' })
                 .send({
-                    cpf: '99999999999',
-                    telefone: '11922222222',
-                    cep: '06280070',
-                    numero: '15',
+                    cpf: '77612538890',
+                    cep: '06090020',
+                    numero: '276',
                 });
 
             expect(res.statusCode).toBe(200);
             expect(res.body).toStrictEqual({
-                cod_aluno: 1,
-                nome: 'KENJI SAKAI',
-                cpf: '99999999999',
-                telefone: '11922222222',
-                cep: '06280070',
+                cod_aluno: 2,
+                nome: 'AYLA AURORA FRANCISCA FOGAÇA',
+                cpf: '77612538890',
+                telefone: '11994028816',
+                cep: '06090020',
                 estado: 'SP',
                 cidade: 'OSASCO',
-                bairro: 'AYROSA',
-                rua: 'RUA AVINHADO',
-                numero: '15',
+                bairro: 'CENTRO',
+                rua: 'AVENIDA DOS AUTONOMISTAS',
+                numero: '276',
                 complemento: null,
             });
+        });
+
+        it('Update CPF invalid', async () => {
+            const res = await request(app.getHttpServer())
+                .patch('/api/v1/school/student/update')
+                .query({ nome: 'Ayla Aurora Francisca Fogaça' })
+                .send({ cpf: '00000000000' });
+
+            expect(res.statusCode).toBe(400);
+            expect(res.body.message).toBe('CPF inválido');
+        });
+
+        it('Update CPF Existing', async () => {
+            const res = await request(app.getHttpServer())
+                .patch('/api/v1/school/student/update')
+                .query({ nome: 'Ayla Aurora Francisca Fogaça' })
+                .send({ cpf: '77612538890' });
+
+            expect(res.statusCode).toBe(400);
+            expect(res.body.message).toBe('CPF já cadastrado');
         });
 
         it('Update CEP without cep or number', async () => {
             const res = await request(app.getHttpServer())
                 .patch('/api/v1/school/student/update')
-                .query({ nome: 'kenji sakai' })
+                .query({ nome: 'Ayla Aurora Francisca Fogaça' })
                 .send({
-                    cidade: 'Osasco',
+                    rua: 'Rua Ux 2',
                 });
 
             expect(res.statusCode).toBe(400);
@@ -223,10 +254,10 @@ describe('AppController (e2e)', () => {
         it('Update CEP invalid', async () => {
             const res = await request(app.getHttpServer())
                 .patch('/api/v1/school/student/update')
-                .query({ nome: 'kenji sakai' })
+                .query({ nome: 'Ayla Aurora Francisca Fogaça' })
                 .send({
-                    cep: '06290077',
-                    numero: '34',
+                    cep: '13308299',
+                    numero: '824',
                 });
 
             expect(res.statusCode).toBe(400);
@@ -238,46 +269,33 @@ describe('AppController (e2e)', () => {
         it('Update CEP invalid with address data Valid', async () => {
             const res = await request(app.getHttpServer())
                 .patch('/api/v1/school/student/update')
-                .query({ nome: 'Carla Sakai' })
+                .query({ nome: 'Ayla Aurora Francisca Fogaça' })
                 .send({
-                    nome: 'Carla Sakai',
-                    cep: '06220077',
-                    estado: 'SP',
+                    cep: '13308299',
+                    estado: 'sp',
                     cidade: 'Osasco',
-                    bairro: 'ROCHDATE',
-                    rua: 'RUA SERGIPE',
-                    numero: '102',
+                    bairro: 'Cidade Nova II',
+                    rua: 'Rua Ux 2',
+                    numero: '824',
                 });
 
             expect(res.statusCode).toBe(200);
             expect(res.body).toStrictEqual({
                 cod_aluno: 2,
-                nome: 'CARLA SAKAI',
-                cpf: '44444444444',
-                telefone: '11955555555',
-                cep: '06220077',
+                nome: 'AYLA AURORA FRANCISCA FOGAÇA',
+                cpf: '77612538890',
+                telefone: '11994028816',
+                cep: '13308299',
                 estado: 'SP',
                 cidade: 'OSASCO',
-                bairro: 'ROCHDATE',
-                rua: 'RUA SERGIPE',
-                numero: '102',
+                bairro: 'CIDADE NOVA II',
+                rua: 'RUA UX 2',
+                numero: '824',
                 complemento: null,
             });
         });
 
-        it('Update CPF Existing', async () => {
-            const res = await request(app.getHttpServer())
-                .patch('/api/v1/school/student/update')
-                .query({ nome: 'kenji sakai' })
-                .send({
-                    cpf: '99999999999',
-                });
-
-            expect(res.statusCode).toBe(400);
-            expect(res.body.message).toBe('CPF já cadastrado');
-        });
-
-        it('Create DTO Invalid', async () => {
+        it('DTO', async () => {
             const res = await request(app.getHttpServer())
                 .post('/api/v1/school/student/create')
                 .send();
@@ -287,6 +305,7 @@ describe('AppController (e2e)', () => {
                 'Nome é obrigatório',
                 'O nome deve ser passado nesse campo',
                 'CPF é obrigatório',
+                'O CPF deve conter 11 números',
                 'Telefone é obrigatório',
                 'CEP é obrigatório',
                 'O CEP deve conter 8 números',
@@ -295,4 +314,3 @@ describe('AppController (e2e)', () => {
         });
     });
 });
-2;

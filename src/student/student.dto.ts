@@ -8,6 +8,9 @@ export class StudentDTO {
     nome: string;
 
     @Transform(({ value }) => value.toString())
+    @Length(11, 11, {
+        message: 'O CPF deve conter 11 números',
+    })
     @IsDefined({ message: 'CPF é obrigatório' })
     cpf: string;
 
