@@ -7,6 +7,7 @@ import { StudentDTO } from './student.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { StudentUpdateDTO } from './student-update.dto';
 import { getAddressByCEP } from '../helpers/address';
+import { validateCPF } from '../helpers/cpf';
 
 @Injectable()
 export class StudentService {
@@ -27,6 +28,8 @@ export class StudentService {
                 complemento,
             } = student;
 
+            await this.checkingCPF(cpf);
+
             const addres = await getAddressByCEP(cep);
 
             if (!addres?.erro) {
@@ -39,8 +42,6 @@ export class StudentService {
                     'CEP Inválido, será necessário passar o CEP, estado, cidade, bairro e rua',
                 );
             }
-
-            await this.checkExistingCPF(cpf);
 
             return await this.prismaService.aluno.create({
                 data: {
@@ -65,7 +66,7 @@ export class StudentService {
         let { cpf, cep, estado, cidade, bairro, rua, numero } = student;
 
         if (cpf) {
-            await this.checkExistingCPF(cpf);
+            await this.checkingCPF(cpf);
             student.cpf = cpf;
         }
 
@@ -122,7 +123,13 @@ export class StudentService {
         return students;
     }
 
-    async checkExistingCPF(cpf: string) {
+    async checkingCPF(cpf: string) {
+        const { valid } = await validateCPF(cpf);
+
+        if (!valid) {
+            throw new BadRequestException('CPF inválido');
+        }
+
         const data = await this.prismaService.aluno.findFirst({
             where: {
                 cpf,
