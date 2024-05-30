@@ -3,9 +3,9 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
-import { StudentDTO } from './student.dto';
+import { StudentDTO } from './dto/student.dto';
 import { PrismaService } from '../../prisma/prisma.service';
-import { StudentUpdateDTO } from './student-update.dto';
+import { StudentUpdateDTO } from './dto/student-update.dto';
 import { getAddressByCEP } from '../helpers/address';
 import { validateCPF } from '../helpers/cpf';
 
@@ -14,8 +14,26 @@ export class StudentService {
     constructor(private readonly prismaService: PrismaService) {}
 
     async create(student: StudentDTO) {
-        try {
-            let {
+        const { nome, cpf, telefone, cep, numero, complemento } = student;
+        let { estado, cidade, bairro, rua } = student;
+
+        await this.checkingCPF(cpf);
+
+        const addres = await getAddressByCEP(cep);
+
+        if (!addres?.erro) {
+            estado = addres?.uf.toUpperCase();
+            cidade = addres?.localidade.toUpperCase();
+            bairro = addres?.bairro.toUpperCase();
+            rua = addres?.logradouro.toUpperCase();
+        } else if (!estado || !cidade || !bairro || !rua) {
+            throw new BadRequestException(
+                'CEP Inválido, será necessário passar o CEP, estado, cidade, bairro e rua',
+            );
+        }
+
+        return await this.prismaService.aluno.create({
+            data: {
                 nome,
                 cpf,
                 telefone,
@@ -26,44 +44,12 @@ export class StudentService {
                 rua,
                 numero,
                 complemento,
-            } = student;
-
-            await this.checkingCPF(cpf);
-
-            const addres = await getAddressByCEP(cep);
-
-            if (!addres?.erro) {
-                estado = addres?.uf.toUpperCase();
-                cidade = addres?.localidade.toUpperCase();
-                bairro = addres?.bairro.toUpperCase();
-                rua = addres?.logradouro.toUpperCase();
-            } else if (!estado || !cidade || !bairro || !rua) {
-                throw new BadRequestException(
-                    'CEP Inválido, será necessário passar o CEP, estado, cidade, bairro e rua',
-                );
-            }
-
-            return await this.prismaService.aluno.create({
-                data: {
-                    nome,
-                    cpf,
-                    telefone,
-                    cep,
-                    estado,
-                    cidade,
-                    bairro,
-                    rua,
-                    numero,
-                    complemento,
-                },
-            });
-        } catch (err) {
-            throw new BadRequestException(err?.response);
-        }
+            },
+        });
     }
 
     async update(nome: string, student: StudentUpdateDTO) {
-        let { cpf, cep, estado, cidade, bairro, rua, numero } = student;
+        const { cpf, cep, estado, cidade, bairro, rua, numero } = student;
 
         if (cpf) {
             await this.checkingCPF(cpf);
