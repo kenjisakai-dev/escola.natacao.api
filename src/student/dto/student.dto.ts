@@ -16,7 +16,7 @@ export class StudentDTO {
 
     @Transform(({ value }) => value.toString())
     @Length(10, 11, {
-        message: 'O Telefone deve conter de 10 a 11 números com o DDD',
+        message: 'O Telefone deve conter de 10 a 11 números incluindo o DDD',
     })
     @IsDefined({ message: 'Telefone é obrigatório' })
     telefone: string;

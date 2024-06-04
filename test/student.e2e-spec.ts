@@ -306,6 +306,7 @@ describe('AppController (e2e)', () => {
                 'CPF é obrigatório',
                 'O CPF deve conter 11 números',
                 'Telefone é obrigatório',
+                'O Telefone deve conter de 10 a 11 números incluindo o DDD',
                 'CEP é obrigatório',
                 'O CEP deve conter 8 números',
                 'Número é obrigatório',
