@@ -28,3 +28,8 @@ model professor {
   telefone      String   @db.VarChar(127)
   data_admissao DateTime @db.Date
 }
+
+model modalidade {
+  cod_modalidade Int    @id @default(autoincrement()) @db.UnsignedInt
+  descricao      String @unique(map: "descricao_UNIQUE") @db.VarChar(127)
+}
