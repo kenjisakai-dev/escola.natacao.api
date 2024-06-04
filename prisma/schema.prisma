@@ -20,3 +20,11 @@ model aluno {
   numero      String  @db.VarChar(127)
   complemento String? @db.VarChar(127)
 }
+
+model professor {
+  cod_professor Int      @id @default(autoincrement()) @db.UnsignedInt
+  nome          String   @db.VarChar(127)
+  cpf           String   @unique(map: "cpf_UNIQUE") @db.VarChar(127)
+  telefone      String   @db.VarChar(127)
+  data_admissao DateTime @db.Date
+}
