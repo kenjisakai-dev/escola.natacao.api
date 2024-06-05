@@ -22,14 +22,27 @@ model aluno {
 }
 
 model professor {
-  cod_professor Int      @id @default(autoincrement()) @db.UnsignedInt
-  nome          String   @db.VarChar(127)
-  cpf           String   @unique(map: "cpf_UNIQUE") @db.VarChar(127)
-  telefone      String   @db.VarChar(127)
-  data_admissao DateTime @db.Date
+  cod_professor        Int                    @id @default(autoincrement()) @db.UnsignedInt
+  nome                 String                 @db.VarChar(127)
+  cpf                  String                 @unique(map: "cpf_UNIQUE") @db.VarChar(127)
+  telefone             String                 @db.VarChar(127)
+  data_admissao        DateTime               @db.Date
+  modalidade_professor modalidade_professor[]
 }
 
 model modalidade {
-  cod_modalidade Int    @id @default(autoincrement()) @db.UnsignedInt
-  descricao      String @unique(map: "descricao_UNIQUE") @db.VarChar(127)
+  cod_modalidade       Int                    @id @default(autoincrement()) @db.UnsignedInt
+  descricao            String                 @unique(map: "descricao_UNIQUE") @db.VarChar(127)
+  modalidade_professor modalidade_professor[]
+}
+
+model modalidade_professor {
+  cod_modalidade_professor Int        @id @default(autoincrement()) @db.UnsignedInt
+  cod_professor            Int        @db.UnsignedInt
+  cod_modalidade           Int        @db.UnsignedInt
+  modalidade               modalidade @relation(fields: [cod_modalidade], references: [cod_modalidade], onDelete: NoAction, onUpdate: NoAction, map: "cod_modalidade_FK")
+  professor                professor  @relation(fields: [cod_professor], references: [cod_professor], onDelete: NoAction, onUpdate: NoAction, map: "cod_professor_FK")
+
+  @@index([cod_modalidade], map: "cod_modalidade_FK")
+  @@index([cod_professor], map: "cod_professor_FK")
 }
