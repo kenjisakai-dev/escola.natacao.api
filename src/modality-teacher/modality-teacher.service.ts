@@ -7,7 +7,6 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { ModalityTeacherDTO } from './dto/modality-teacher.dto';
 import { TeacherService } from '../teacher/teacher.service';
 import { ModalityService } from '../modality/modality.service';
-import { modalidade_professor } from '@prisma/client';
 
 @Injectable()
 export class ModalityTeacherService {
@@ -34,7 +33,7 @@ export class ModalityTeacherService {
 
         if (_modalityTeacher) {
             throw new BadRequestException(
-                'Relacionamento modalidade professor já existente',
+                'O professor já está vinculado na modalidade',
             );
         }
 
@@ -46,64 +45,33 @@ export class ModalityTeacherService {
         });
     }
 
-    async findOne(modalidade: string, professor: string) {
-        let modalitiesTeachers: modalidade_professor[];
-        let cod_modalidade: number;
-        let cod_professor: number;
+    async findOne(professor: string) {
+        const { cod_professor } = await this.teacherService.findOne(professor);
 
-        if (modalidade) {
-            cod_modalidade = (await this.modalityService.findOne(modalidade))
-                .cod_modalidade;
-        }
+        const teacher = await this.prismaService.modalidade_professor.findMany({
+            where: {
+                cod_professor,
+            },
+        });
 
-        if (professor) {
-            cod_professor = (await this.teacherService.findOne(professor))
-                .cod_professor;
-        }
-
-        if (modalidade && professor) {
-            modalitiesTeachers =
-                await this.prismaService.modalidade_professor.findMany({
-                    where: {
-                        cod_modalidade,
-                        cod_professor,
-                    },
-                });
-        } else {
-            modalitiesTeachers =
-                await this.prismaService.modalidade_professor.findMany({
-                    where: {
-                        OR: [
-                            {
-                                cod_professor,
-                            },
-                            {
-                                cod_modalidade,
-                            },
-                        ],
-                    },
-                });
-        }
-
-        if (modalitiesTeachers.length === 0) {
+        if (teacher.length === 0) {
             throw new NotFoundException(
-                'Relacionamento modalidade professor não encontrado',
+                'Nenhuma informação do professor foi encontrada',
             );
         }
 
-        return modalitiesTeachers;
+        return teacher;
     }
 
     async findAll() {
-        const modalities_teachers =
-            await this.prismaService.modalidade_professor.findMany();
+        const result = await this.prismaService.modalidade_professor.findMany();
 
-        if (modalities_teachers.length === 0) {
+        if (result.length === 0) {
             throw new NotFoundException(
-                'Não existe modalidades e professores cadastrados',
+                'Não existe professores cadastrados nas modalidades',
             );
         }
 
-        return modalities_teachers;
+        return result;
     }
 }

@@ -49,29 +49,18 @@ describe('AppController (e2e)', () => {
 
             expect(res.statusCode).toBe(404);
             expect(res.body.message).toBe(
-                'Não existe modalidades e professores cadastrados',
+                'Não existe professores cadastrados nas modalidades',
             );
         });
 
-        it('FindOne notFound modality', async () => {
-            const res = await request(app.getHttpServer())
-                .get('/api/v1/school/modality/teacher/findOne')
-                .query({ modalidade: 'Natação' });
-
-            expect(res.statusCode).toBe(404);
-            expect(res.body.message).toBe(
-                'Relacionamento modalidade professor não encontrado',
-            );
-        });
-
-        it('FindOne notFound teacher', async () => {
+        it('FindOne notFound', async () => {
             const res = await request(app.getHttpServer())
                 .get('/api/v1/school/modality/teacher/findOne')
                 .query({ professor: 'Emanuelly Ester da Luz' });
 
             expect(res.statusCode).toBe(404);
             expect(res.body.message).toBe(
-                'Relacionamento modalidade professor não encontrado',
+                'Nenhuma informação do professor foi encontrada',
             );
         });
 
@@ -91,6 +80,20 @@ describe('AppController (e2e)', () => {
             });
         });
 
+        it('Create duplicate', async () => {
+            const res = await request(app.getHttpServer())
+                .post('/api/v1/school/modality/teacher/create')
+                .send({
+                    modalidade: 'Natação',
+                    professor: 'Emanuelly Ester da Luz',
+                });
+
+            expect(res.statusCode).toBe(400);
+            expect(res.body.message).toBe(
+                'O professor já está vinculado na modalidade',
+            );
+        });
+
         it('FindAll', async () => {
             const res = await request(app.getHttpServer())
                 .get('/api/v1/school/modality/teacher/findAll')
@@ -106,22 +109,7 @@ describe('AppController (e2e)', () => {
             ]);
         });
 
-        it('FindOne notFound modality', async () => {
-            const res = await request(app.getHttpServer())
-                .get('/api/v1/school/modality/teacher/findOne')
-                .query({ modalidade: 'Natação' });
-
-            expect(res.statusCode).toBe(200);
-            expect(res.body).toStrictEqual([
-                {
-                    cod_modalidade_professor: 1,
-                    cod_modalidade: 1,
-                    cod_professor: 1,
-                },
-            ]);
-        });
-
-        it('FindOne notFound teacher', async () => {
+        it('FindOne', async () => {
             const res = await request(app.getHttpServer())
                 .get('/api/v1/school/modality/teacher/findOne')
                 .query({ professor: 'Emanuelly Ester da Luz' });
