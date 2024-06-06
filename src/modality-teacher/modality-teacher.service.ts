@@ -45,22 +45,22 @@ export class ModalityTeacherService {
         });
     }
 
-    async findOne(professor: string) {
-        const { cod_professor } = await this.teacherService.findOne(professor);
-
-        const teacher = await this.prismaService.modalidade_professor.findMany({
-            where: {
-                cod_professor,
+    async findOne(cod_modalidade_professor: number) {
+        const result = await this.prismaService.modalidade_professor.findUnique(
+            {
+                where: {
+                    cod_modalidade_professor,
+                },
             },
-        });
+        );
 
-        if (teacher.length === 0) {
+        if (!result) {
             throw new NotFoundException(
-                'Nenhuma informação do professor foi encontrada',
+                'Código da modalidade_professor não encontrado',
             );
         }
 
-        return teacher;
+        return result;
     }
 
     async findAll() {

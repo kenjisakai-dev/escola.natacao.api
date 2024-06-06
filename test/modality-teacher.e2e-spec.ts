@@ -56,11 +56,11 @@ describe('AppController (e2e)', () => {
         it('FindOne notFound', async () => {
             const res = await request(app.getHttpServer())
                 .get('/api/v1/school/modality/teacher/findOne')
-                .query({ professor: 'Emanuelly Ester da Luz' });
+                .query({ cod_modalidade_professor: 1 });
 
             expect(res.statusCode).toBe(404);
             expect(res.body.message).toBe(
-                'Nenhuma informação do professor foi encontrada',
+                'Código da modalidade_professor não encontrado',
             );
         });
 
@@ -112,16 +112,14 @@ describe('AppController (e2e)', () => {
         it('FindOne', async () => {
             const res = await request(app.getHttpServer())
                 .get('/api/v1/school/modality/teacher/findOne')
-                .query({ professor: 'Emanuelly Ester da Luz' });
+                .query({ cod_modalidade_professor: 1 });
 
             expect(res.statusCode).toBe(200);
-            expect(res.body).toStrictEqual([
-                {
-                    cod_modalidade_professor: 1,
-                    cod_modalidade: 1,
-                    cod_professor: 1,
-                },
-            ]);
+            expect(res.body).toStrictEqual({
+                cod_modalidade_professor: 1,
+                cod_modalidade: 1,
+                cod_professor: 1,
+            });
         });
 
         it('DTO', async () => {

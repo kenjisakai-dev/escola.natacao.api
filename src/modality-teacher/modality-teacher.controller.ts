@@ -14,8 +14,12 @@ export class ModalityTeacherController {
     }
 
     @Get('findOne')
-    async findOne(@Query('professor') professor: string) {
-        return await this.modalityTeacherService.findOne(professor);
+    async findOne(
+        @Query('cod_modalidade_professor') cod_modalidade_professor: number,
+    ) {
+        return await this.modalityTeacherService.findOne(
+            cod_modalidade_professor,
+        );
     }
 
     @Get('findAll')
