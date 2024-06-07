@@ -13,12 +13,15 @@ export class TeacherService {
     constructor(private readonly prismaService: PrismaService) {}
 
     async create(teacher: TeacherDTO) {
-        const { cpf } = teacher;
+        const { cpf, data_admissao } = teacher;
 
         await this.checkingCPF(cpf);
 
         return await this.prismaService.professor.create({
-            data: teacher,
+            data: {
+                ...teacher,
+                data_admissao: data_admissao ?? new Date(),
+            },
         });
     }
 
@@ -27,7 +30,6 @@ export class TeacherService {
 
         if (cpf) {
             await this.checkingCPF(cpf);
-            teacher.cpf = cpf;
         }
 
         const { cod_professor } = await this.findOne(nome ?? '');

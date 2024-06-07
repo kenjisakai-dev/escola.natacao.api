@@ -177,8 +177,6 @@ describe('AppController (e2e)', () => {
                 'O CPF deve conter 11 números',
                 'Telefone é obrigatório',
                 'O Telefone deve conter de 10 a 11 números incluindo o DDD',
-                'Data de admissão é obrigatório',
-                'A data de admissão deve ser passado nesse campo',
             ]);
         });
     });

@@ -8,17 +8,18 @@ datasource db {
 }
 
 model aluno {
-  cod_aluno   Int     @id @default(autoincrement()) @db.UnsignedInt
-  nome        String  @db.VarChar(127)
-  cpf         String  @unique(map: "cpf_UNIQUE") @db.VarChar(127)
-  telefone    String  @db.VarChar(127)
-  cep         String  @db.VarChar(127)
-  estado      String  @db.VarChar(127)
-  cidade      String  @db.VarChar(127)
-  bairro      String  @db.VarChar(127)
-  rua         String  @db.VarChar(127)
-  numero      String  @db.VarChar(127)
-  complemento String? @db.VarChar(127)
+  cod_aluno   Int         @id @default(autoincrement()) @db.UnsignedInt
+  nome        String      @db.VarChar(127)
+  cpf         String      @unique(map: "cpf_UNIQUE") @db.VarChar(127)
+  telefone    String      @db.VarChar(127)
+  cep         String      @db.VarChar(127)
+  estado      String      @db.VarChar(127)
+  cidade      String      @db.VarChar(127)
+  bairro      String      @db.VarChar(127)
+  rua         String      @db.VarChar(127)
+  numero      String      @db.VarChar(127)
+  complemento String?     @db.VarChar(127)
+  matricula   matricula[]
 }
 
 model professor {
@@ -53,7 +54,20 @@ model turma {
   nome                     String               @db.VarChar(127)
   horarios                 String               @db.VarChar(127)
   cod_modalidade_professor Int                  @db.UnsignedInt
+  matricula                matricula[]
   modalidade_professor     modalidade_professor @relation(fields: [cod_modalidade_professor], references: [cod_modalidade_professor], onDelete: NoAction, onUpdate: NoAction, map: "cod_modalidade_professor_FK")
 
   @@index([cod_modalidade_professor], map: "cod_modalidade_professor_FK")
+}
+
+model matricula {
+  cod_matricula Int      @id @default(autoincrement()) @db.UnsignedInt
+  data          DateTime @db.Date
+  cod_turma     Int      @db.UnsignedInt
+  cod_aluno     Int      @db.UnsignedInt
+  aluno         aluno    @relation(fields: [cod_aluno], references: [cod_aluno], onDelete: NoAction, onUpdate: NoAction, map: "cod_aluno_FK")
+  turma         turma    @relation(fields: [cod_turma], references: [cod_turma], onDelete: NoAction, onUpdate: NoAction, map: "cod_turma_FK")
+
+  @@index([cod_aluno], map: "cod_aluno_FK")
+  @@index([cod_turma], map: "cod_turma_FK")
 }

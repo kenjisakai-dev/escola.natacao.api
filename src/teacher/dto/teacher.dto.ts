@@ -1,6 +1,11 @@
 import { Transform } from 'class-transformer';
-import { IsDate, IsDefined, IsString, Length } from 'class-validator';
-import { formatDate } from '../../helpers/date';
+import {
+    IsDate,
+    IsDefined,
+    IsOptional,
+    IsString,
+    Length,
+} from 'class-validator';
 
 export class TeacherDTO {
     @Transform(({ value }) => value.toUpperCase())
@@ -22,10 +27,10 @@ export class TeacherDTO {
     @IsDefined({ message: 'Telefone é obrigatório' })
     telefone: string;
 
-    @Transform(({ value }) => formatDate(value))
+    @Transform(({ value }) => new Date(value))
     @IsDate({
         message: 'A data de admissão deve ser passado nesse campo',
     })
-    @IsDefined({ message: 'Data de admissão é obrigatório' })
-    data_admissao: Date;
+    @IsOptional()
+    data_admissao?: Date;
 }
