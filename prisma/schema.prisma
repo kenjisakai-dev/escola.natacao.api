@@ -61,13 +61,24 @@ model turma {
 }
 
 model matricula {
-  cod_matricula Int      @id @default(autoincrement()) @db.UnsignedInt
-  data          DateTime @db.Date
-  cod_turma     Int      @db.UnsignedInt
-  cod_aluno     Int      @db.UnsignedInt
-  aluno         aluno    @relation(fields: [cod_aluno], references: [cod_aluno], onDelete: NoAction, onUpdate: NoAction, map: "cod_aluno_FK")
-  turma         turma    @relation(fields: [cod_turma], references: [cod_turma], onDelete: NoAction, onUpdate: NoAction, map: "cod_turma_FK")
+  cod_matricula Int          @id @default(autoincrement()) @db.UnsignedInt
+  data          DateTime     @db.Date
+  cod_turma     Int          @db.UnsignedInt
+  cod_aluno     Int          @db.UnsignedInt
+  frequencia    frequencia[]
+  aluno         aluno        @relation(fields: [cod_aluno], references: [cod_aluno], onDelete: NoAction, onUpdate: NoAction, map: "cod_aluno_FK")
+  turma         turma        @relation(fields: [cod_turma], references: [cod_turma], onDelete: NoAction, onUpdate: NoAction, map: "cod_turma_FK")
 
   @@index([cod_aluno], map: "cod_aluno_FK")
   @@index([cod_turma], map: "cod_turma_FK")
+}
+
+model frequencia {
+  cod_frequencia Int       @id @default(autoincrement()) @db.UnsignedInt
+  data           DateTime  @db.Date
+  presenca       Int       @db.TinyInt
+  cod_matricula  Int       @db.UnsignedInt
+  matricula      matricula @relation(fields: [cod_matricula], references: [cod_matricula], onDelete: NoAction, onUpdate: NoAction, map: "cod_matricula_FK")
+
+  @@index([cod_matricula], map: "cod_matricula_FK")
 }
