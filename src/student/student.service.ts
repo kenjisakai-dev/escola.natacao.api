@@ -12,9 +12,8 @@ import { validateCPF } from '../helpers/cpf';
 export class StudentService {
     constructor(private readonly prismaService: PrismaService) {}
 
-    async create(student: StudentDTO) {
-        const { nome, cpf, telefone, cep, numero, complemento } = student;
-        let { estado, cidade, bairro, rua } = student;
+    async create(data: StudentDTO) {
+        let { cpf, cep, estado, cidade, bairro, rua } = data;
 
         await this.checkingCPF(cpf);
 
@@ -27,67 +26,63 @@ export class StudentService {
             rua = addres?.logradouro.toUpperCase();
         } else if (!estado || !cidade || !bairro || !rua) {
             throw new BadRequestException(
-                'CEP Inválido, será necessário passar o CEP, estado, cidade, bairro e rua',
+                'CEP Inválido, será necessário passar o estado, cidade, bairro e rua junto com o CEP',
             );
         }
 
         return await this.prismaService.aluno.create({
             data: {
-                nome,
-                cpf,
-                telefone,
-                cep,
+                ...data,
                 estado,
                 cidade,
                 bairro,
                 rua,
-                numero,
-                complemento,
             },
         });
     }
 
-    async update(nome: string, student: StudentUpdateDTO) {
-        const { cpf, cep, estado, cidade, bairro, rua, numero } = student;
+    async update(nome: string, data: StudentUpdateDTO) {
+        const { cpf, cep, estado, cidade, bairro, rua, numero } = data;
 
         if (cpf) {
             await this.checkingCPF(cpf);
-            student.cpf = cpf;
         }
 
         if (cep || estado || cidade || bairro || rua || numero) {
             if (!cep || !numero) {
-                throw new BadRequestException('CEP e número é obrigatório');
+                throw new BadRequestException(
+                    'O CEP e número residencial é obrigatório',
+                );
             } else {
                 const addres = await getAddressByCEP(cep);
 
                 if (!addres?.erro) {
-                    student.estado = addres?.uf.toUpperCase();
-                    student.cidade = addres?.localidade.toUpperCase();
-                    student.bairro = addres?.bairro.toUpperCase();
-                    student.rua = addres?.logradouro.toUpperCase();
+                    data.estado = addres?.uf.toUpperCase();
+                    data.cidade = addres?.localidade.toUpperCase();
+                    data.bairro = addres?.bairro.toUpperCase();
+                    data.rua = addres?.logradouro.toUpperCase();
                 } else if (!estado || !cidade || !bairro || !rua) {
                     throw new BadRequestException(
-                        'CEP Inválido, será necessário passar o CEP, estado, cidade, bairro, rua e número',
+                        'CEP Inválido, será necessário passar o estado, cidade, bairro, rua e número junto com o CEP',
                     );
                 }
             }
         }
 
-        const { cod_aluno } = await this.findOne(nome ?? '');
+        const { cod_aluno } = await this.findOne(nome);
 
         return await this.prismaService.aluno.update({
             where: {
                 cod_aluno,
             },
-            data: student,
+            data,
         });
     }
 
-    async findOne(nome: string) {
+    async findOne(nome: string = '') {
         const student = await this.prismaService.aluno.findFirst({
             where: {
-                nome: nome ?? '',
+                nome,
             },
         });
 
@@ -115,13 +110,13 @@ export class StudentService {
             throw new BadRequestException('CPF inválido');
         }
 
-        const data = await this.prismaService.aluno.findFirst({
+        const student = await this.prismaService.aluno.findFirst({
             where: {
                 cpf,
             },
         });
 
-        if (data) {
+        if (student) {
             throw new BadRequestException('CPF já cadastrado');
         }
     }

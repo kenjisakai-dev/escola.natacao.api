@@ -2,9 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
+import { PrismaService } from '../prisma/prisma.service';
 
 describe('StudentController (e2e)', () => {
     let app: INestApplication;
+    let prismaService: PrismaService;
+    let token: string;
 
     beforeEach(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -18,6 +21,8 @@ describe('StudentController (e2e)', () => {
             }),
         );
         await app.init();
+
+        prismaService = new PrismaService();
     });
 
     afterAll(async () => {
@@ -25,9 +30,30 @@ describe('StudentController (e2e)', () => {
     });
 
     describe('Student', () => {
+        it('Create Data', async () => {
+            await prismaService.funcionario.create({
+                data: {
+                    nome: 'LORENA STEFANY FÁTIMA JESUS',
+                    email: 'lorena_jesus@school.com.br',
+                    senha: '$2b$10$cmFbzueEBcfu3/UN6v7Wz.gQdC4Tq.ICHCF2wJ93DgH36P749uT2m',
+                    permissao: 1,
+                },
+            });
+
+            const login = await request(app.getHttpServer())
+                .post('/api/v1/school/auth/login')
+                .send({
+                    email: 'lorena_jesus@school.com.br',
+                    senha: 'lorena123',
+                });
+
+            token = login.body.acessToken;
+        });
+
         it('FindAll empty', async () => {
             const res = await request(app.getHttpServer())
                 .get('/api/v1/school/student/findAll')
+                .set('Authorization', token)
                 .send();
 
             expect(res.statusCode).toBe(404);
@@ -37,6 +63,7 @@ describe('StudentController (e2e)', () => {
         it('FindOne notFound', async () => {
             const res = await request(app.getHttpServer())
                 .get('/api/v1/school/student/findOne')
+                .set('Authorization', token)
                 .query({ nome: 'Alessandra Lavínia Jaqueline da Rosa' });
 
             expect(res.statusCode).toBe(404);
@@ -46,6 +73,7 @@ describe('StudentController (e2e)', () => {
         it('Create', async () => {
             const res = await request(app.getHttpServer())
                 .post('/api/v1/school/student/create')
+                .set('Authorization', token)
                 .send({
                     nome: 'Alessandra Lavínia Jaqueline da Rosa',
                     cpf: '03094550819',
@@ -73,6 +101,7 @@ describe('StudentController (e2e)', () => {
         it('FindAll', async () => {
             const res = await request(app.getHttpServer())
                 .get('/api/v1/school/student/findAll')
+                .set('Authorization', token)
                 .send();
 
             expect(res.statusCode).toBe(200);
@@ -96,6 +125,7 @@ describe('StudentController (e2e)', () => {
         it('FindOne', async () => {
             const res = await request(app.getHttpServer())
                 .get('/api/v1/school/student/findOne')
+                .set('Authorization', token)
                 .query({ nome: 'Alessandra Lavínia Jaqueline da Rosa' });
 
             expect(res.statusCode).toBe(200);
@@ -117,6 +147,7 @@ describe('StudentController (e2e)', () => {
         it('Create CPF Existing', async () => {
             const res = await request(app.getHttpServer())
                 .post('/api/v1/school/student/create')
+                .set('Authorization', token)
                 .send({
                     nome: 'Ayla Aurora Francisca Fogaça',
                     cpf: '03094550819',
@@ -132,6 +163,7 @@ describe('StudentController (e2e)', () => {
         it('Create CPF invalid', async () => {
             const res = await request(app.getHttpServer())
                 .post('/api/v1/school/student/create')
+                .set('Authorization', token)
                 .send({
                     nome: 'Ayla Aurora Francisca Fogaça',
                     cpf: '00000000000',
@@ -147,6 +179,7 @@ describe('StudentController (e2e)', () => {
         it('Create CEP invalid', async () => {
             const res = await request(app.getHttpServer())
                 .post('/api/v1/school/student/create')
+                .set('Authorization', token)
                 .send({
                     nome: 'Ayla Aurora Francisca Fogaça',
                     cpf: '32645840850',
@@ -157,13 +190,14 @@ describe('StudentController (e2e)', () => {
 
             expect(res.statusCode).toBe(400);
             expect(res.body.message).toBe(
-                'CEP Inválido, será necessário passar o CEP, estado, cidade, bairro e rua',
+                'CEP Inválido, será necessário passar o estado, cidade, bairro e rua junto com o CEP',
             );
         });
 
         it('Create CEP invalid with address data Valid', async () => {
             const res = await request(app.getHttpServer())
                 .post('/api/v1/school/student/create')
+                .set('Authorization', token)
                 .send({
                     nome: 'Ayla Aurora Francisca Fogaça',
                     cpf: '32645840850',
@@ -195,6 +229,7 @@ describe('StudentController (e2e)', () => {
         it('Update', async () => {
             const res = await request(app.getHttpServer())
                 .patch('/api/v1/school/student/update')
+                .set('Authorization', token)
                 .query({ nome: 'Ayla Aurora Francisca Fogaça' })
                 .send({
                     cpf: '77612538890',
@@ -221,6 +256,7 @@ describe('StudentController (e2e)', () => {
         it('Update CPF invalid', async () => {
             const res = await request(app.getHttpServer())
                 .patch('/api/v1/school/student/update')
+                .set('Authorization', token)
                 .query({ nome: 'Ayla Aurora Francisca Fogaça' })
                 .send({ cpf: '00000000000' });
 
@@ -231,6 +267,7 @@ describe('StudentController (e2e)', () => {
         it('Update CPF Existing', async () => {
             const res = await request(app.getHttpServer())
                 .patch('/api/v1/school/student/update')
+                .set('Authorization', token)
                 .query({ nome: 'Ayla Aurora Francisca Fogaça' })
                 .send({ cpf: '77612538890' });
 
@@ -241,18 +278,22 @@ describe('StudentController (e2e)', () => {
         it('Update CEP without cep or number', async () => {
             const res = await request(app.getHttpServer())
                 .patch('/api/v1/school/student/update')
+                .set('Authorization', token)
                 .query({ nome: 'Ayla Aurora Francisca Fogaça' })
                 .send({
                     rua: 'Rua Ux 2',
                 });
 
             expect(res.statusCode).toBe(400);
-            expect(res.body.message).toBe('CEP e número é obrigatório');
+            expect(res.body.message).toBe(
+                'O CEP e número residencial é obrigatório',
+            );
         });
 
         it('Update CEP invalid', async () => {
             const res = await request(app.getHttpServer())
                 .patch('/api/v1/school/student/update')
+                .set('Authorization', token)
                 .query({ nome: 'Ayla Aurora Francisca Fogaça' })
                 .send({
                     cep: '13308299',
@@ -261,13 +302,14 @@ describe('StudentController (e2e)', () => {
 
             expect(res.statusCode).toBe(400);
             expect(res.body.message).toBe(
-                'CEP Inválido, será necessário passar o CEP, estado, cidade, bairro, rua e número',
+                'CEP Inválido, será necessário passar o estado, cidade, bairro, rua e número junto com o CEP',
             );
         });
 
         it('Update CEP invalid with address data Valid', async () => {
             const res = await request(app.getHttpServer())
                 .patch('/api/v1/school/student/update')
+                .set('Authorization', token)
                 .query({ nome: 'Ayla Aurora Francisca Fogaça' })
                 .send({
                     cep: '13308299',
@@ -297,6 +339,7 @@ describe('StudentController (e2e)', () => {
         it('DTO', async () => {
             const res = await request(app.getHttpServer())
                 .post('/api/v1/school/student/create')
+                .set('Authorization', token)
                 .send();
 
             expect(res.statusCode).toBe(400);
