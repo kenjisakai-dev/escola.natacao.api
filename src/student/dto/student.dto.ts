@@ -1,3 +1,4 @@
+import { PartialType } from '@nestjs/mapped-types';
 import { Transform } from 'class-transformer';
 import { IsDefined, IsOptional, IsString, Length } from 'class-validator';
 
@@ -60,3 +61,5 @@ export class StudentDTO {
     @IsOptional()
     complemento?: string;
 }
+
+export class StudentUpdateDTO extends PartialType(StudentDTO) {}

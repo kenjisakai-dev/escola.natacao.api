@@ -1,8 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { ClassDTO } from './dto/class.dto';
+import { ClassDTO, ClassUpdateDTO } from './dto/class.dto';
 import { ModalityTeacherService } from '../modality-teacher/modality-teacher.service';
-import { ClassUpdateDTO } from './dto/class-update.dto';
 
 @Injectable()
 export class ClassService {

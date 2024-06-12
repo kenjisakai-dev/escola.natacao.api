@@ -1,3 +1,4 @@
+import { PartialType } from '@nestjs/mapped-types';
 import { Transform } from 'class-transformer';
 import { IsDefined, IsString } from 'class-validator';
 
@@ -9,3 +10,5 @@ export class ModalityDTO {
     @IsDefined({ message: 'Modalidade é obrigatório' })
     descricao: string;
 }
+
+export class ModalityUpdateDTO extends PartialType(ModalityDTO) {}

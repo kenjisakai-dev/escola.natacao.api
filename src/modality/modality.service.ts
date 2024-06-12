@@ -3,9 +3,8 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
-import { ModalityDTO } from './dto/modality.dto';
+import { ModalityDTO, ModalityUpdateDTO } from './dto/modality.dto';
 import { PrismaService } from '../../prisma/prisma.service';
-import { ModalityUpdateDTO } from './dto/modality-update.dto';
 
 @Injectable()
 export class ModalityService {

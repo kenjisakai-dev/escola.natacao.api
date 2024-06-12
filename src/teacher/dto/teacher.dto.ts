@@ -1,3 +1,4 @@
+import { PartialType } from '@nestjs/mapped-types';
 import { Transform } from 'class-transformer';
 import {
     IsDate,
@@ -34,3 +35,5 @@ export class TeacherDTO {
     @IsOptional()
     data_admissao?: Date;
 }
+
+export class TeacherUpdateDTO extends PartialType(TeacherDTO) {}

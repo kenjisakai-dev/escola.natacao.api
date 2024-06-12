@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { token_validator_cpf } from '../config/environment';
+import { config } from '../config/environment';
 
 interface ICPF {
     valid: boolean;
@@ -9,7 +9,7 @@ interface ICPF {
 export async function validateCPF(cpf: string): Promise<ICPF> {
     const res = await axios.get('https://api.invertexto.com/v1/validator', {
         params: {
-            token: token_validator_cpf,
+            token: config.token_validator_cpf,
             value: cpf,
             type: 'cpf',
         },

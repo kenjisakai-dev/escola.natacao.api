@@ -3,10 +3,9 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
-import { TeacherDTO } from './dto/teacher.dto';
+import { TeacherDTO, TeacherUpdateDTO } from './dto/teacher.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { validateCPF } from '../helpers/cpf';
-import { TeacherUpdateDTO } from './dto/teacher-update.dto';
 
 @Injectable()
 export class TeacherService {

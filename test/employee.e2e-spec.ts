@@ -3,7 +3,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 
-describe('StudentController (e2e)', () => {
+describe('EmployeeController (e2e)', () => {
     let app: INestApplication;
 
     beforeEach(async () => {
@@ -27,7 +27,7 @@ describe('StudentController (e2e)', () => {
     describe('Student', () => {
         it('FindAll empty', async () => {
             const res = await request(app.getHttpServer())
-                .get('/api/v1/school/student/findAll')
+                .get('/api/v1/school/employee/findAll')
                 .send();
 
             expect(res.statusCode).toBe(404);

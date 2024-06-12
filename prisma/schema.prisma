@@ -82,3 +82,11 @@ model frequencia {
 
   @@index([cod_matricula], map: "cod_matricula_FK")
 }
+
+model funcionario {
+  cod_funcionario  Int       @id @default(autoincrement()) @db.UnsignedInt
+  nome             String    @db.VarChar(127)
+  email            String    @unique(map: "email_UNIQUE") @db.VarChar(127)
+  senha            String    @db.VarChar(127)
+  permissao        Int       @default(1)
+}

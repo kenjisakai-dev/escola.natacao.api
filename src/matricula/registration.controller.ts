@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Patch, Post, Query } from '@nestjs/common';
-import { RegistrationDTO } from './dto/registration.dto';
+import { RegistrationDTO, RegistrationUpdateDTO } from './dto/registration.dto';
 import { RegistrationService } from './registration.service';
-import { RegistrationUpdateDTO } from './dto/registration-update.dto';
 
 @Controller('api/v1/school/registration')
 export class RegistrationController {

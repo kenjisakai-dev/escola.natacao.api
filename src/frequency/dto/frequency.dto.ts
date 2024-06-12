@@ -1,3 +1,4 @@
+import { PartialType } from '@nestjs/mapped-types';
 import { Transform } from 'class-transformer';
 import { IsDate, IsDefined, IsOptional } from 'class-validator';
 
@@ -17,3 +18,5 @@ export class FrequencyDTO {
     @IsDefined({ message: 'Código da matricula é obrigatório' })
     cod_matricula: number;
 }
+
+export class FrequencyUpdateDTO extends PartialType(FrequencyDTO) {}

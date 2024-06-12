@@ -1,8 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { FrequencyDTO } from './dto/frequency.dto';
+import { FrequencyDTO, FrequencyUpdateDTO } from './dto/frequency.dto';
 import { RegistrationService } from '../matricula/registration.service';
-import { FrequencyUpdateDTO } from './dto/frequency-update.dto';
 
 @Injectable()
 export class FrequencyService {

@@ -1,3 +1,4 @@
+import { PartialType } from '@nestjs/mapped-types';
 import { Transform } from 'class-transformer';
 import { IsDate, IsDefined, IsOptional, IsString } from 'class-validator';
 
@@ -18,3 +19,5 @@ export class RegistrationDTO {
     @IsDefined({ message: 'Nome do aluno é obrigatório' })
     aluno: string;
 }
+
+export class RegistrationUpdateDTO extends PartialType(RegistrationDTO) {}

@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Patch, Post, Query } from '@nestjs/common';
-import { ModalityDTO } from './dto/modality.dto';
+import { ModalityDTO, ModalityUpdateDTO } from './dto/modality.dto';
 import { ModalityService } from './modality.service';
-import { ModalityUpdateDTO } from './dto/modality-update.dto';
 
 @Controller('api/v1/school/modality')
 export class ModalityController {

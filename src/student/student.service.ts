@@ -3,9 +3,8 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
-import { StudentDTO } from './dto/student.dto';
+import { StudentDTO, StudentUpdateDTO } from './dto/student.dto';
 import { PrismaService } from '../../prisma/prisma.service';
-import { StudentUpdateDTO } from './dto/student-update.dto';
 import { getAddressByCEP } from '../helpers/address';
 import { validateCPF } from '../helpers/cpf';
 

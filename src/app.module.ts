@@ -6,6 +6,8 @@ import { ModalityTeacherModule } from './modality-teacher/modality-teacher.modul
 import { ClassModule } from './class_/class.module';
 import { RegistrationModule } from './matricula/registration.module';
 import { FrequencyModule } from './frequency/frequency.module';
+import { AuthModule } from './auth/auth.module';
+import { EmployeeModule } from './employee/employee.module';
 
 @Module({
     imports: [
@@ -16,6 +18,8 @@ import { FrequencyModule } from './frequency/frequency.module';
         ClassModule,
         RegistrationModule,
         FrequencyModule,
+        AuthModule,
+        EmployeeModule,
     ],
 })
 export class AppModule {}

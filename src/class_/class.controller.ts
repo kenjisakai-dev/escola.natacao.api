@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Patch, Post, Query } from '@nestjs/common';
-import { ClassDTO } from './dto/class.dto';
+import { ClassDTO, ClassUpdateDTO } from './dto/class.dto';
 import { ClassService } from './class.service';
-import { ClassUpdateDTO } from './dto/class-update.dto';
 
 @Controller('api/v1/school/class')
 export class ClassController {

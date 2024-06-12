@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Patch, Post, Query } from '@nestjs/common';
-import { FrequencyDTO } from './dto/frequency.dto';
+import { FrequencyDTO, FrequencyUpdateDTO } from './dto/frequency.dto';
 import { FrequencyService } from './frequency.service';
-import { FrequencyUpdateDTO } from './dto/frequency-update.dto';
 
 @Controller('api/v1/school/frequency')
 export class FrequencyController {
