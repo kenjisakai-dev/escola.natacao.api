@@ -4,9 +4,10 @@ import { ModalityTeacherController } from './modality-teacher.controller';
 import { ModalityTeacherService } from './modality-teacher.service';
 import { TeacherModule } from '../teacher/teacher.module';
 import { ModalityModule } from '../modality/modality.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-    imports: [PrismaModule, TeacherModule, ModalityModule],
+    imports: [PrismaModule, TeacherModule, ModalityModule, AuthModule],
     controllers: [ModalityTeacherController],
     providers: [ModalityTeacherService],
     exports: [ModalityTeacherService],

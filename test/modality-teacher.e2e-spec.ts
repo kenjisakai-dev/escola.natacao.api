@@ -4,7 +4,7 @@ import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../prisma/prisma.service';
 
-describe('ModalityController (e2e)', () => {
+describe('ModalityTeacherController (e2e)', () => {
     let app: INestApplication;
     let prismaService: PrismaService;
     let token: string;
@@ -49,91 +49,123 @@ describe('ModalityController (e2e)', () => {
         token = login.body.acessToken;
     });
 
+    beforeAll(async () => {
+        await request(app.getHttpServer())
+            .post('/api/v1/school/teacher/create')
+            .set('Authorization', token)
+            .send({
+                nome: 'Emanuelly Ester da Luz',
+                cpf: '16023002838',
+                telefone: '11986067733',
+                data_admissao: '2024-06-04',
+            });
+
+        await request(app.getHttpServer())
+            .post('/api/v1/school/modality/create')
+            .set('Authorization', token)
+            .send({
+                descricao: 'Natação',
+            });
+    });
+
     it('FindAll empty', async () => {
         const res = await request(app.getHttpServer())
-            .get('/api/v1/school/modality/findAll')
+            .get('/api/v1/school/modality/teacher/findAll')
             .set('Authorization', token)
             .send();
 
         expect(res.statusCode).toBe(404);
-        expect(res.body.message).toBe('Não existe modalidades cadastradas');
+        expect(res.body.message).toBe(
+            'Não existe professores cadastrados nas modalidades',
+        );
     });
 
     it('FindOne notFound', async () => {
         const res = await request(app.getHttpServer())
-            .get('/api/v1/school/modality/findOne')
-            .query({ cod_modalidade: 1 });
+            .get('/api/v1/school/modality/teacher/findOne')
+            .set('Authorization', token)
+            .query({ cod_modalidade_professor: 1 });
 
         expect(res.statusCode).toBe(404);
-        expect(res.body.message).toBe('Modalidade não encontrada');
+        expect(res.body.message).toBe(
+            'Registro do professor na Modalidade não encontrado',
+        );
     });
 
     it('Create', async () => {
         const res = await request(app.getHttpServer())
-            .post('/api/v1/school/modality/create')
+            .post('/api/v1/school/modality/teacher/create')
+            .set('Authorization', token)
             .send({
-                descricao: 'Natação',
+                cod_modalidade: 1,
+                cod_professor: 1,
             });
 
         expect(res.statusCode).toBe(201);
         expect(res.body).toStrictEqual({
+            cod_modalidade_professor: 1,
             cod_modalidade: 1,
-            descricao: 'NATAÇÃO',
+            cod_professor: 1,
         });
+    });
+
+    it('Create duplicate', async () => {
+        const res = await request(app.getHttpServer())
+            .post('/api/v1/school/modality/teacher/create')
+            .set('Authorization', token)
+            .send({
+                cod_modalidade: 1,
+                cod_professor: 1,
+            });
+
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toBe(
+            'O professor já está vinculado na modalidade',
+        );
     });
 
     it('FindAll', async () => {
         const res = await request(app.getHttpServer())
-            .get('/api/v1/school/modality/findAll')
+            .get('/api/v1/school/modality/teacher/findAll')
+            .set('Authorization', token)
             .send();
 
         expect(res.statusCode).toBe(200);
         expect(res.body).toStrictEqual([
             {
+                cod_modalidade_professor: 1,
                 cod_modalidade: 1,
-                descricao: 'NATAÇÃO',
+                cod_professor: 1,
             },
         ]);
     });
 
     it('FindOne', async () => {
         const res = await request(app.getHttpServer())
-            .get('/api/v1/school/modality/findOne')
+            .get('/api/v1/school/modality/teacher/findOne')
             .set('Authorization', token)
-            .query({ cod_modalidade: 1 });
+            .query({ cod_modalidade_professor: 1 });
 
         expect(res.statusCode).toBe(200);
         expect(res.body).toStrictEqual({
+            cod_modalidade_professor: 1,
             cod_modalidade: 1,
-            descricao: 'NATAÇÃO',
-        });
-    });
-
-    it('Update', async () => {
-        const res = await request(app.getHttpServer())
-            .patch('/api/v1/school/modality/update')
-            .set('Authorization', token)
-            .query({ cod_modalidade: 1 })
-            .send({
-                descricao: 'Natação I',
-            });
-
-        expect(res.statusCode).toBe(200);
-        expect(res.body).toStrictEqual({
-            cod_modalidade: 1,
-            descricao: 'NATAÇÃO I',
+            cod_professor: 1,
         });
     });
 
     it('DTO', async () => {
         const res = await request(app.getHttpServer())
-            .post('/api/v1/school/modality/create')
+            .post('/api/v1/school/modality/teacher/create')
+            .set('Authorization', token)
             .send();
 
         expect(res.statusCode).toBe(400);
         expect(res.body.message).toStrictEqual([
-            'Modalidade é obrigatório',
-            'A descrição da modalidade deve ser passado nesse campo',
+            'Código do professor é obrigatório',
+            'O código do professor deve ser passado nesse campo',
+            'Código da modalidade é obrigatório',
+            'O código da modalidade deve ser passado nesse campo',
         ]);
     });
 });

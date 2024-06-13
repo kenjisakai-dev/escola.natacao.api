@@ -10,39 +10,39 @@ import { PrismaService } from '../../prisma/prisma.service';
 export class ModalityService {
     constructor(private readonly prismaService: PrismaService) {}
 
-    async create(modality: ModalityDTO) {
-        const { descricao } = modality;
+    async create(data: ModalityDTO) {
+        const { descricao = '' } = data;
 
-        const _modality = await this.prismaService.modalidade.findFirst({
+        const modality = await this.prismaService.modalidade.findFirst({
             where: {
-                descricao: descricao ?? '',
+                descricao,
             },
         });
 
-        if (_modality) {
+        if (modality) {
             throw new BadRequestException('Modalidade já existente');
         }
 
         return await this.prismaService.modalidade.create({
-            data: modality,
+            data: data,
         });
     }
 
-    async update(nome: string, modality: ModalityUpdateDTO) {
-        const { cod_modalidade } = await this.findOne(nome ?? '');
+    async update(cod_modalidade: number, data: ModalityUpdateDTO) {
+        await this.findOne(cod_modalidade);
 
         return await this.prismaService.modalidade.update({
             where: {
                 cod_modalidade,
             },
-            data: modality,
+            data: data,
         });
     }
 
-    async findOne(descricao: string) {
+    async findOne(cod_modalidade: number) {
         const modality = await this.prismaService.modalidade.findFirst({
             where: {
-                descricao: descricao ?? '',
+                cod_modalidade,
             },
         });
 

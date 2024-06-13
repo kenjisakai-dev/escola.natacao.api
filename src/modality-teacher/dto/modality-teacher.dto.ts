@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsDefined, IsInt, IsString } from 'class-validator';
+import { IsDefined, IsInt } from 'class-validator';
 
 export class ModalityTeacherDTO {
     @Transform(({ value }) => Number(value))
@@ -7,7 +7,8 @@ export class ModalityTeacherDTO {
     @IsDefined({ message: 'Código do professor é obrigatório' })
     cod_professor: number;
 
-    @IsString({ message: 'A modalidade deve ser passado nesse campo' })
-    @IsDefined({ message: 'A modalidade é obrigatório' })
-    modalidade: string;
+    @Transform(({ value }) => Number(value))
+    @IsInt({ message: 'O código da modalidade deve ser passado nesse campo' })
+    @IsDefined({ message: 'Código da modalidade é obrigatório' })
+    cod_modalidade: number;
 }

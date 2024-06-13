@@ -16,14 +16,13 @@ export class ModalityTeacherService {
         private readonly modalityService: ModalityService,
     ) {}
 
-    async create(modalityTeacher: ModalityTeacherDTO) {
-        const { cod_professor, modalidade } = modalityTeacher;
+    async create(data: ModalityTeacherDTO) {
+        const { cod_professor, cod_modalidade } = data;
 
         await this.teacherService.findOne(cod_professor);
-        const { cod_modalidade } =
-            await this.modalityService.findOne(modalidade);
+        await this.modalityService.findOne(cod_modalidade);
 
-        const _modalityTeacher =
+        const modality =
             await this.prismaService.modalidade_professor.findFirst({
                 where: {
                     cod_professor,
@@ -31,7 +30,7 @@ export class ModalityTeacherService {
                 },
             });
 
-        if (_modalityTeacher) {
+        if (modality) {
             throw new BadRequestException(
                 'O professor já está vinculado na modalidade',
             );
@@ -46,32 +45,32 @@ export class ModalityTeacherService {
     }
 
     async findOne(cod_modalidade_professor: number) {
-        const result = await this.prismaService.modalidade_professor.findUnique(
-            {
+        const modality =
+            await this.prismaService.modalidade_professor.findUnique({
                 where: {
                     cod_modalidade_professor,
                 },
-            },
-        );
+            });
 
-        if (!result) {
+        if (!modality) {
             throw new NotFoundException(
-                'Código da modalidade_professor não encontrado',
+                'Registro do professor na Modalidade não encontrado',
             );
         }
 
-        return result;
+        return modality;
     }
 
     async findAll() {
-        const result = await this.prismaService.modalidade_professor.findMany();
+        const modalities =
+            await this.prismaService.modalidade_professor.findMany();
 
-        if (result.length === 0) {
+        if (modalities.length === 0) {
             throw new NotFoundException(
                 'Não existe professores cadastrados nas modalidades',
             );
         }
 
-        return result;
+        return modalities;
     }
 }

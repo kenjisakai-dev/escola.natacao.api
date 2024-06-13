@@ -7,21 +7,21 @@ export class ModalityController {
     constructor(private readonly modalityService: ModalityService) {}
 
     @Post('create')
-    async create(@Body() modality: ModalityDTO) {
-        return await this.modalityService.create(modality);
+    async create(@Body() data: ModalityDTO) {
+        return await this.modalityService.create(data);
     }
 
     @Patch('update')
     async update(
-        @Body() modality: ModalityUpdateDTO,
-        @Query('descricao') descricao: string,
+        @Body() data: ModalityUpdateDTO,
+        @Query('cod_modalidade') cod_modalidade: number,
     ) {
-        return await this.modalityService.update(descricao, modality);
+        return await this.modalityService.update(cod_modalidade, data);
     }
 
     @Get('findOne')
-    async findOne(@Query('descricao') descricao: string) {
-        return await this.modalityService.findOne(descricao);
+    async findOne(@Query('cod_modalidade') cod_modalidade: number) {
+        return await this.modalityService.findOne(cod_modalidade);
     }
 
     @Get('findAll')
