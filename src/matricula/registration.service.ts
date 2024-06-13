@@ -13,10 +13,10 @@ export class RegistrationService {
     ) {}
 
     async create(registration: RegistrationDTO) {
-        const { data, cod_turma, aluno } = registration;
+        const { data, cod_turma, cod_aluno } = registration;
 
         await this.classService.findOne(cod_turma);
-        const { cod_aluno } = await this.studentService.findOne(aluno);
+        await this.studentService.findOne(cod_aluno);
 
         return await this.prismaService.matricula.create({
             data: {
@@ -28,14 +28,12 @@ export class RegistrationService {
     }
 
     async update(cod_matricula: number, registration: RegistrationUpdateDTO) {
-        let cod_aluno: number;
-
-        const { data, aluno, cod_turma } = registration;
+        const { data, cod_turma, cod_aluno } = registration;
 
         await this.findOne(cod_matricula);
 
-        if (aluno) {
-            cod_aluno = (await this.studentService.findOne(aluno)).cod_aluno;
+        if (cod_aluno) {
+            await this.studentService.findOne(cod_aluno);
         }
 
         if (cod_turma) {

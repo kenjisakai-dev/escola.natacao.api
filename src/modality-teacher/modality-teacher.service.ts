@@ -17,9 +17,9 @@ export class ModalityTeacherService {
     ) {}
 
     async create(modalityTeacher: ModalityTeacherDTO) {
-        const { professor, modalidade } = modalityTeacher;
+        const { cod_professor, modalidade } = modalityTeacher;
 
-        const { cod_professor } = await this.teacherService.findOne(professor);
+        await this.teacherService.findOne(cod_professor);
         const { cod_modalidade } =
             await this.modalityService.findOne(modalidade);
 

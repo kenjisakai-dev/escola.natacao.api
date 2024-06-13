@@ -22,13 +22,16 @@ export class StudentController {
     }
 
     @Patch('update')
-    async update(@Query('nome') nome: string, @Body() data: StudentUpdateDTO) {
-        return await this.studentService.update(nome, data);
+    async update(
+        @Query('cod_aluno') cod_aluno: number,
+        @Body() data: StudentUpdateDTO,
+    ) {
+        return await this.studentService.update(cod_aluno, data);
     }
 
     @Get('findOne')
-    async findOne(@Query('nome') nome: string) {
-        return await this.studentService.findOne(nome);
+    async findOne(@Query('cod_aluno') cod_aluno: number) {
+        return await this.studentService.findOne(cod_aluno);
     }
 
     @Get('findAll')

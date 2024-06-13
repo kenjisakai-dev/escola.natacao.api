@@ -1,7 +1,17 @@
-import { Body, Controller, Get, Patch, Post, Query } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Patch,
+    Post,
+    Query,
+    UseGuards,
+} from '@nestjs/common';
 import { TeacherDTO, TeacherUpdateDTO } from './dto/teacher.dto';
 import { TeacherService } from './teacher.service';
+import { AuthGuard } from '../guards/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('api/v1/school/teacher')
 export class TeacherController {
     constructor(private readonly teacherService: TeacherService) {}
@@ -13,15 +23,15 @@ export class TeacherController {
 
     @Patch('update')
     async update(
-        @Body() teacher: TeacherUpdateDTO,
-        @Query('nome') nome: string,
+        @Body() data: TeacherUpdateDTO,
+        @Query('cod_professor') cod_professor: number,
     ) {
-        return await this.teacherService.update(nome, teacher);
+        return await this.teacherService.update(cod_professor, data);
     }
 
     @Get('findOne')
-    async findOne(@Query('nome') nome: string) {
-        return await this.teacherService.findOne(nome);
+    async findOne(@Query('cod_professor') cod_professor: number) {
+        return await this.teacherService.findOne(cod_professor);
     }
 
     @Get('findAll')

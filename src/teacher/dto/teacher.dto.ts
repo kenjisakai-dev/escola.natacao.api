@@ -28,7 +28,7 @@ export class TeacherDTO {
     @IsDefined({ message: 'Telefone é obrigatório' })
     telefone: string;
 
-    @Transform(({ value }) => new Date(value))
+    @Transform(({ value }) => (value ? new Date(value) : new Date()))
     @IsDate({
         message: 'A data de admissão deve ser passado nesse campo',
     })

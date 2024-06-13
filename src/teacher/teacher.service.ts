@@ -11,40 +11,42 @@ import { validateCPF } from '../helpers/cpf';
 export class TeacherService {
     constructor(private readonly prismaService: PrismaService) {}
 
-    async create(teacher: TeacherDTO) {
-        const { cpf, data_admissao } = teacher;
+    async create(data: TeacherDTO) {
+        const { nome, cpf, telefone, data_admissao } = data;
 
         await this.checkingCPF(cpf);
 
         return await this.prismaService.professor.create({
             data: {
-                ...teacher,
-                data_admissao: data_admissao ?? new Date(),
+                nome,
+                cpf,
+                telefone,
+                data_admissao,
             },
         });
     }
 
-    async update(nome: string, teacher: TeacherUpdateDTO) {
-        const { cpf } = teacher;
+    async update(cod_professor: number, data: TeacherUpdateDTO) {
+        const { cpf } = data;
+
+        await this.findOne(cod_professor);
 
         if (cpf) {
             await this.checkingCPF(cpf);
         }
 
-        const { cod_professor } = await this.findOne(nome ?? '');
-
         return await this.prismaService.professor.update({
             where: {
                 cod_professor,
             },
-            data: teacher,
+            data: data,
         });
     }
 
-    async findOne(nome: string) {
+    async findOne(cod_professor: number) {
         const teacher = await this.prismaService.professor.findFirst({
             where: {
-                nome: nome ?? '',
+                cod_professor,
             },
         });
 

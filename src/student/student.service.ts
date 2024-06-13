@@ -53,7 +53,7 @@ export class StudentService {
         });
     }
 
-    async update(_nome: string, data: StudentUpdateDTO) {
+    async update(cod_aluno: number, data: StudentUpdateDTO) {
         const {
             nome,
             cpf,
@@ -89,8 +89,6 @@ export class StudentService {
             }
         }
 
-        const { cod_aluno } = await this.findOne(_nome);
-
         return await this.prismaService.aluno.update({
             where: {
                 cod_aluno,
@@ -110,10 +108,10 @@ export class StudentService {
         });
     }
 
-    async findOne(nome: string = '') {
+    async findOne(cod_aluno: number) {
         const student = await this.prismaService.aluno.findFirst({
             where: {
-                nome,
+                cod_aluno,
             },
         });
 

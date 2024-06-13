@@ -1,9 +1,11 @@
-import { IsDefined, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsDefined, IsInt, IsString } from 'class-validator';
 
 export class ModalityTeacherDTO {
-    @IsString({ message: 'O nome do professor deve ser passado nesse campo' })
-    @IsDefined({ message: 'O nome do professor é obrigatório' })
-    professor: string;
+    @Transform(({ value }) => Number(value))
+    @IsInt({ message: 'O código do professor deve ser passado nesse campo' })
+    @IsDefined({ message: 'Código do professor é obrigatório' })
+    cod_professor: number;
 
     @IsString({ message: 'A modalidade deve ser passado nesse campo' })
     @IsDefined({ message: 'A modalidade é obrigatório' })
