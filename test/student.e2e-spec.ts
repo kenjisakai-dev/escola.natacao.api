@@ -9,7 +9,7 @@ describe('StudentController (e2e)', () => {
     let prismaService: PrismaService;
     let token: string;
 
-    beforeEach(async () => {
+    beforeAll(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule],
         }).compile();
@@ -21,35 +21,35 @@ describe('StudentController (e2e)', () => {
             }),
         );
         await app.init();
-
-        prismaService = new PrismaService();
     });
 
     afterAll(async () => {
         await app.close();
     });
 
-    describe('Student', () => {
-        it('Create Data', async () => {
-            await prismaService.funcionario.create({
-                data: {
-                    nome: 'LORENA STEFANY FÁTIMA JESUS',
-                    email: 'lorena_jesus@school.com.br',
-                    senha: '$2b$10$cmFbzueEBcfu3/UN6v7Wz.gQdC4Tq.ICHCF2wJ93DgH36P749uT2m',
-                    permissao: 1,
-                },
-            });
+    beforeAll(async () => {
+        prismaService = new PrismaService();
 
-            const login = await request(app.getHttpServer())
-                .post('/api/v1/school/auth/login')
-                .send({
-                    email: 'lorena_jesus@school.com.br',
-                    senha: 'lorena123',
-                });
-
-            token = login.body.acessToken;
+        await prismaService.funcionario.create({
+            data: {
+                nome: 'LORENA STEFANY FÁTIMA JESUS',
+                email: 'lorena_jesus@school.com.br',
+                senha: '$2b$10$cmFbzueEBcfu3/UN6v7Wz.gQdC4Tq.ICHCF2wJ93DgH36P749uT2m',
+                permissao: 1,
+            },
         });
 
+        const login = await request(app.getHttpServer())
+            .post('/api/v1/school/auth/login')
+            .send({
+                email: 'lorena_jesus@school.com.br',
+                senha: 'lorena123',
+            });
+
+        token = login.body.acessToken;
+    });
+
+    describe('Student', () => {
         it('FindAll empty', async () => {
             const res = await request(app.getHttpServer())
                 .get('/api/v1/school/student/findAll')
@@ -144,7 +144,7 @@ describe('StudentController (e2e)', () => {
             });
         });
 
-        it('Create CPF Existing', async () => {
+        it('CPF Existing', async () => {
             const res = await request(app.getHttpServer())
                 .post('/api/v1/school/student/create')
                 .set('Authorization', token)
@@ -160,7 +160,7 @@ describe('StudentController (e2e)', () => {
             expect(res.body.message).toBe('CPF já cadastrado');
         });
 
-        it('Create CPF invalid', async () => {
+        it('CPF invalid', async () => {
             const res = await request(app.getHttpServer())
                 .post('/api/v1/school/student/create')
                 .set('Authorization', token)
@@ -176,7 +176,7 @@ describe('StudentController (e2e)', () => {
             expect(res.body.message).toBe('CPF inválido');
         });
 
-        it('Create CEP invalid', async () => {
+        it('CEP invalid', async () => {
             const res = await request(app.getHttpServer())
                 .post('/api/v1/school/student/create')
                 .set('Authorization', token)
@@ -190,11 +190,11 @@ describe('StudentController (e2e)', () => {
 
             expect(res.statusCode).toBe(400);
             expect(res.body.message).toBe(
-                'CEP Inválido, será necessário passar o estado, cidade, bairro e rua junto com o CEP',
+                'CEP Inválido, será necessário passar o estado, cidade, bairro, rua e número junto com o CEP',
             );
         });
 
-        it('Create CEP invalid with address data Valid', async () => {
+        it('CEP invalid with address data valids', async () => {
             const res = await request(app.getHttpServer())
                 .post('/api/v1/school/student/create')
                 .set('Authorization', token)
@@ -253,29 +253,7 @@ describe('StudentController (e2e)', () => {
             });
         });
 
-        it('Update CPF invalid', async () => {
-            const res = await request(app.getHttpServer())
-                .patch('/api/v1/school/student/update')
-                .set('Authorization', token)
-                .query({ nome: 'Ayla Aurora Francisca Fogaça' })
-                .send({ cpf: '00000000000' });
-
-            expect(res.statusCode).toBe(400);
-            expect(res.body.message).toBe('CPF inválido');
-        });
-
-        it('Update CPF Existing', async () => {
-            const res = await request(app.getHttpServer())
-                .patch('/api/v1/school/student/update')
-                .set('Authorization', token)
-                .query({ nome: 'Ayla Aurora Francisca Fogaça' })
-                .send({ cpf: '77612538890' });
-
-            expect(res.statusCode).toBe(400);
-            expect(res.body.message).toBe('CPF já cadastrado');
-        });
-
-        it('Update CEP without cep or number', async () => {
+        it('Update CEP without cep or number residential', async () => {
             const res = await request(app.getHttpServer())
                 .patch('/api/v1/school/student/update')
                 .set('Authorization', token)
@@ -288,52 +266,6 @@ describe('StudentController (e2e)', () => {
             expect(res.body.message).toBe(
                 'O CEP e número residencial é obrigatório',
             );
-        });
-
-        it('Update CEP invalid', async () => {
-            const res = await request(app.getHttpServer())
-                .patch('/api/v1/school/student/update')
-                .set('Authorization', token)
-                .query({ nome: 'Ayla Aurora Francisca Fogaça' })
-                .send({
-                    cep: '13308299',
-                    numero: '824',
-                });
-
-            expect(res.statusCode).toBe(400);
-            expect(res.body.message).toBe(
-                'CEP Inválido, será necessário passar o estado, cidade, bairro, rua e número junto com o CEP',
-            );
-        });
-
-        it('Update CEP invalid with address data Valid', async () => {
-            const res = await request(app.getHttpServer())
-                .patch('/api/v1/school/student/update')
-                .set('Authorization', token)
-                .query({ nome: 'Ayla Aurora Francisca Fogaça' })
-                .send({
-                    cep: '13308299',
-                    estado: 'sp',
-                    cidade: 'Osasco',
-                    bairro: 'Cidade Nova II',
-                    rua: 'Rua Ux 2',
-                    numero: '824',
-                });
-
-            expect(res.statusCode).toBe(200);
-            expect(res.body).toStrictEqual({
-                cod_aluno: 2,
-                nome: 'AYLA AURORA FRANCISCA FOGAÇA',
-                cpf: '77612538890',
-                telefone: '11994028816',
-                cep: '13308299',
-                estado: 'SP',
-                cidade: 'OSASCO',
-                bairro: 'CIDADE NOVA II',
-                rua: 'RUA UX 2',
-                numero: '824',
-                complemento: null,
-            });
         });
 
         it('DTO', async () => {

@@ -7,46 +7,71 @@ import { StudentDTO, StudentUpdateDTO } from './dto/student.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { getAddressByCEP } from '../helpers/address';
 import { validateCPF } from '../helpers/cpf';
+import { IAddress } from './interface/adress.interface';
 
 @Injectable()
 export class StudentService {
     constructor(private readonly prismaService: PrismaService) {}
 
     async create(data: StudentDTO) {
-        let { cpf, cep, estado, cidade, bairro, rua } = data;
+        const {
+            nome,
+            cpf,
+            telefone,
+            cep,
+            estado,
+            cidade,
+            bairro,
+            rua,
+            numero,
+            complemento,
+        } = data;
 
         await this.checkingCPF(cpf);
 
-        const addres = await getAddressByCEP(cep);
-
-        if (!addres?.erro) {
-            estado = addres?.uf.toUpperCase();
-            cidade = addres?.localidade.toUpperCase();
-            bairro = addres?.bairro.toUpperCase();
-            rua = addres?.logradouro.toUpperCase();
-        } else if (!estado || !cidade || !bairro || !rua) {
-            throw new BadRequestException(
-                'CEP Inválido, será necessário passar o estado, cidade, bairro e rua junto com o CEP',
-            );
-        }
+        const address = await this.checkingCEP({
+            cep,
+            estado,
+            cidade,
+            bairro,
+            rua,
+        });
 
         return await this.prismaService.aluno.create({
             data: {
-                ...data,
-                estado,
-                cidade,
-                bairro,
-                rua,
+                nome,
+                cpf,
+                telefone,
+                cep,
+                estado: address.estado,
+                cidade: address.cidade,
+                bairro: address.bairro,
+                rua: address.rua,
+                numero,
+                complemento,
             },
         });
     }
 
-    async update(nome: string, data: StudentUpdateDTO) {
-        const { cpf, cep, estado, cidade, bairro, rua, numero } = data;
+    async update(_nome: string, data: StudentUpdateDTO) {
+        const {
+            nome,
+            cpf,
+            telefone,
+            cep,
+            estado,
+            cidade,
+            bairro,
+            rua,
+            numero,
+            complemento,
+        } = data;
 
         if (cpf) {
             await this.checkingCPF(cpf);
         }
+
+        let address: IAddress;
 
         if (cep || estado || cidade || bairro || rua || numero) {
             if (!cep || !numero) {
@@ -54,28 +79,34 @@ export class StudentService {
                     'O CEP e número residencial é obrigatório',
                 );
             } else {
-                const addres = await getAddressByCEP(cep);
-
-                if (!addres?.erro) {
-                    data.estado = addres?.uf.toUpperCase();
-                    data.cidade = addres?.localidade.toUpperCase();
-                    data.bairro = addres?.bairro.toUpperCase();
-                    data.rua = addres?.logradouro.toUpperCase();
-                } else if (!estado || !cidade || !bairro || !rua) {
-                    throw new BadRequestException(
-                        'CEP Inválido, será necessário passar o estado, cidade, bairro, rua e número junto com o CEP',
-                    );
-                }
+                address = await this.checkingCEP({
+                    cep,
+                    estado,
+                    cidade,
+                    bairro,
+                    rua,
+                });
             }
         }
 
-        const { cod_aluno } = await this.findOne(nome);
+        const { cod_aluno } = await this.findOne(_nome);
 
         return await this.prismaService.aluno.update({
             where: {
                 cod_aluno,
             },
-            data,
+            data: {
+                nome,
+                cpf,
+                telefone,
+                cep,
+                estado: address.estado,
+                cidade: address.cidade,
+                bairro: address.bairro,
+                rua: address.rua,
+                numero,
+                complemento,
+            },
         });
     }
 
@@ -119,5 +150,28 @@ export class StudentService {
         if (student) {
             throw new BadRequestException('CPF já cadastrado');
         }
+    }
+
+    async checkingCEP(data: IAddress) {
+        const { cep, estado, cidade, bairro, rua } = data;
+
+        const res = await getAddressByCEP(cep);
+
+        let address: IAddress = {};
+
+        if (!res?.erro) {
+            address.estado = res.estado.toUpperCase();
+            address.cidade = res.cidade.toUpperCase();
+            address.bairro = res.bairro.toUpperCase();
+            address.rua = res.rua.toUpperCase();
+        } else if (!estado || !cidade || !bairro || !rua) {
+            throw new BadRequestException(
+                'CEP Inválido, será necessário passar o estado, cidade, bairro, rua e número junto com o CEP',
+            );
+        } else {
+            address = data;
+        }
+
+        return address;
     }
 }
