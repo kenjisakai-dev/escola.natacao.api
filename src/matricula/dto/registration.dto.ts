@@ -3,12 +3,12 @@ import { Transform } from 'class-transformer';
 import { IsDate, IsDefined, IsInt, IsOptional } from 'class-validator';
 
 export class RegistrationDTO {
-    @Transform(({ value }) => new Date(value))
+    @Transform(({ value }) => (value ? new Date(value) : new Date()))
     @IsDate({
         message: 'A data de matricula deve ser passado nesse campo',
     })
     @IsOptional()
-    data?: Date;
+    data_matricula: Date;
 
     @Transform(({ value }) => Number(value))
     @IsDefined({ message: 'Código da modalidade_professor é obrigatório' })

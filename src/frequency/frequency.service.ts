@@ -10,22 +10,18 @@ export class FrequencyService {
         private readonly registrationService: RegistrationService,
     ) {}
 
-    async create(frequency: FrequencyDTO) {
-        const { data, presenca, cod_matricula } = frequency;
+    async create(data: FrequencyDTO) {
+        const { cod_matricula } = data;
 
         await this.registrationService.findOne(cod_matricula);
 
         return await this.prismaService.frequencia.create({
-            data: {
-                data: data ?? new Date(),
-                presenca,
-                cod_matricula,
-            },
+            data,
         });
     }
 
-    async update(cod_frequencia: number, frequency: FrequencyUpdateDTO) {
-        const { data, presenca, cod_matricula } = frequency;
+    async update(cod_frequencia: number, data: FrequencyUpdateDTO) {
+        const { cod_matricula } = data;
 
         await this.findOne(cod_frequencia);
 
@@ -37,39 +33,35 @@ export class FrequencyService {
             where: {
                 cod_frequencia,
             },
-            data: {
-                data,
-                presenca,
-                cod_matricula,
-            },
+            data,
         });
     }
 
     async findOne(cod_frequencia: number) {
-        const result = await this.prismaService.frequencia.findUnique({
+        const frequency = await this.prismaService.frequencia.findUnique({
             where: {
                 cod_frequencia,
             },
         });
 
-        if (!result) {
+        if (!frequency) {
             throw new NotFoundException(
                 'Registro da frequencia não encontrado',
             );
         }
 
-        return result;
+        return frequency;
     }
 
     async findAll() {
-        const result = await this.prismaService.frequencia.findMany();
+        const frequencies = await this.prismaService.frequencia.findMany();
 
-        if (result.length === 0) {
+        if (frequencies.length === 0) {
             throw new NotFoundException(
                 'Não existe registros de frequencias cadastrados',
             );
         }
 
-        return result;
+        return frequencies;
     }
 }

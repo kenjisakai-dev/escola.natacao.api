@@ -1,7 +1,17 @@
-import { Body, Controller, Get, Patch, Post, Query } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Patch,
+    Post,
+    Query,
+    UseGuards,
+} from '@nestjs/common';
 import { ClassDTO, ClassUpdateDTO } from './dto/class.dto';
 import { ClassService } from './class.service';
+import { AuthGuard } from '../guards/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('api/v1/school/class')
 export class ClassController {
     constructor(private readonly classService: ClassService) {}

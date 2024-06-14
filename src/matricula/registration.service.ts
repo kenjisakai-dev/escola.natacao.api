@@ -12,23 +12,19 @@ export class RegistrationService {
         private readonly studentService: StudentService,
     ) {}
 
-    async create(registration: RegistrationDTO) {
-        const { data, cod_turma, cod_aluno } = registration;
+    async create(data: RegistrationDTO) {
+        const { cod_turma, cod_aluno } = data;
 
         await this.classService.findOne(cod_turma);
         await this.studentService.findOne(cod_aluno);
 
         return await this.prismaService.matricula.create({
-            data: {
-                data: data ?? new Date(),
-                cod_turma,
-                cod_aluno,
-            },
+            data,
         });
     }
 
-    async update(cod_matricula: number, registration: RegistrationUpdateDTO) {
-        const { data, cod_turma, cod_aluno } = registration;
+    async update(cod_matricula: number, data: RegistrationUpdateDTO) {
+        const { cod_turma, cod_aluno } = data;
 
         await this.findOne(cod_matricula);
 
@@ -44,35 +40,31 @@ export class RegistrationService {
             where: {
                 cod_matricula,
             },
-            data: {
-                data,
-                cod_turma,
-                cod_aluno,
-            },
+            data,
         });
     }
 
     async findOne(cod_matricula: number) {
-        const result = await this.prismaService.matricula.findUnique({
+        const registration = await this.prismaService.matricula.findUnique({
             where: {
                 cod_matricula,
             },
         });
 
-        if (!result) {
+        if (!registration) {
             throw new NotFoundException('Matricula não encontrada');
         }
 
-        return result;
+        return registration;
     }
 
     async findAll() {
-        const result = await this.prismaService.matricula.findMany();
+        const registrations = await this.prismaService.matricula.findMany();
 
-        if (result.length === 0) {
+        if (registrations.length === 0) {
             throw new NotFoundException('Não existe matriculas cadastradas');
         }
 
-        return result;
+        return registrations;
     }
 }

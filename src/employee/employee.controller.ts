@@ -1,7 +1,17 @@
-import { Body, Controller, Get, Patch, Post, Query } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Patch,
+    Post,
+    Query,
+    UseGuards,
+} from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { EmployeeDTO, EmployeeUpdateDTO } from './dto/employee.dto';
+import { AuthGuard } from '../guards/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('api/v1/school/employee')
 export class EmployeeController {
     constructor(private readonly employeeService: EmployeeService) {}

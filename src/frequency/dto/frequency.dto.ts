@@ -3,12 +3,12 @@ import { Transform } from 'class-transformer';
 import { IsDate, IsDefined, IsOptional } from 'class-validator';
 
 export class FrequencyDTO {
-    @Transform(({ value }) => new Date(value))
+    @Transform(({ value }) => (value ? new Date(value) : new Date()))
     @IsDate({
         message: 'A data de presença deve ser passado nesse campo',
     })
     @IsOptional()
-    data?: Date;
+    data_aula: Date;
 
     @Transform(({ value }) => (value === true ? 1 : 0))
     @IsDefined({ message: 'A presença é obrigatória' })
