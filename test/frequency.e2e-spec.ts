@@ -30,8 +30,6 @@ describe('FrequencyController (e2e)', () => {
     beforeAll(async () => {
         prismaService = new PrismaService();
 
-        await prismaService.funcionario.findMany({});
-
         await prismaService.funcionario.create({
             data: {
                 nome: 'LORENA STEFANY FÁTIMA JESUS',

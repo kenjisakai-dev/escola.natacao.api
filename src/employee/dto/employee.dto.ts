@@ -16,7 +16,7 @@ export class EmployeeDTO {
     @IsDefined({ message: 'Nome é obrigatório' })
     nome: string;
 
-    @Transform(({ value }) => value.toUpperCase())
+    @Transform(({ value }) => value.toLowerCase())
     @IsEmail({}, { message: 'O email deve ser passado nesse campo' })
     @IsDefined({ message: 'Email é obrigatório' })
     email: string;

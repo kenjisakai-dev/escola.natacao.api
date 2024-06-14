@@ -1,344 +1,176 @@
-// import { Test, TestingModule } from '@nestjs/testing';
-// import { INestApplication, ValidationPipe } from '@nestjs/common';
-// import * as request from 'supertest';
-// import { AppModule } from '../src/app.module';
-// import { PrismaService } from '../prisma/prisma.service';
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import * as request from 'supertest';
+import { AppModule } from '../src/app.module';
+import { PrismaService } from '../prisma/prisma.service';
 
-// describe('EmployeeController (e2e)', () => {
-//     let app: INestApplication;
-//     let prismaService: PrismaService;
-//     let token: string;
+describe('EmployeeController (e2e)', () => {
+    let app: INestApplication;
+    let prismaService: PrismaService;
+    let token: string;
 
-//     beforeAll(async () => {
-//         const moduleFixture: TestingModule = await Test.createTestingModule({
-//             imports: [AppModule],
-//         }).compile();
+    beforeAll(async () => {
+        const moduleFixture: TestingModule = await Test.createTestingModule({
+            imports: [AppModule],
+        }).compile();
 
-//         app = moduleFixture.createNestApplication();
-//         app.useGlobalPipes(
-//             new ValidationPipe({
-//                 transform: true,
-//             }),
-//         );
-//         await app.init();
-//     });
+        app = moduleFixture.createNestApplication();
+        app.useGlobalPipes(
+            new ValidationPipe({
+                transform: true,
+            }),
+        );
+        await app.init();
+    });
 
-//     afterAll(async () => {
-//         await app.close();
-//     });
+    afterAll(async () => {
+        await app.close();
+    });
 
-//     beforeAll(async () => {
-//         prismaService = new PrismaService();
+    beforeAll(async () => {
+        prismaService = new PrismaService();
 
-//         await prismaService.funcionario.findMany({});
+        await prismaService.funcionario.create({
+            data: {
+                nome: 'LORENA STEFANY FÁTIMA JESUS',
+                email: 'lorena_jesus@school.com.br',
+                senha: '$2b$10$cmFbzueEBcfu3/UN6v7Wz.gQdC4Tq.ICHCF2wJ93DgH36P749uT2m',
+                permissao: 2,
+            },
+        });
 
-//         await prismaService.funcionario.create({
-//             data: {
-//                 nome: 'LORENA STEFANY FÁTIMA JESUS',
-//                 email: 'lorena_jesus@school.com.br',
-//                 senha: '$2b$10$cmFbzueEBcfu3/UN6v7Wz.gQdC4Tq.ICHCF2wJ93DgH36P749uT2m',
-//                 permissao: 1,
-//             },
-//         });
+        const login = await request(app.getHttpServer())
+            .post('/api/v1/school/auth/login')
+            .send({
+                email: 'lorena_jesus@school.com.br',
+                senha: 'lorena123',
+            });
 
-//         const login = await request(app.getHttpServer())
-//             .post('/api/v1/school/auth/login')
-//             .send({
-//                 email: 'lorena_jesus@school.com.br',
-//                 senha: 'lorena123',
-//             });
+        token = login.body.acessToken;
+    });
 
-//         token = login.body.acessToken;
-//     });
+    it('Create', async () => {
+        const res = await request(app.getHttpServer())
+            .post('/api/v1/school/employee/create')
+            .set('Authorization', token)
+            .send({
+                nome: 'Julia Mariana Lavínia Aparício',
+                email: 'julia-aparicio70@afsn.com.br',
+                senha: 'gD1Pm4zjZo',
+                permissao: 1,
+            });
 
-//     // it('FindAll empty', async () => {
-//     //     const res = await request(app.getHttpServer())
-//     //         .get('/api/v1/school/employee/findAll')
-//     //         .set('Authorization', token)
-//     //         .send();
+        expect(res.statusCode).toBe(201);
+        expect(res.body.acessToken).not.toBeNull();
+    });
 
-//     //     expect(res.statusCode).toBe(404);
-//     //     expect(res.body.message).toBe('Não existe alunos cadastrados');
-//     // });
+    it('Existing CPF', async () => {
+        const res = await request(app.getHttpServer())
+            .post('/api/v1/school/employee/create')
+            .set('Authorization', token)
+            .send({
+                nome: 'Julia Mariana Lavínia Aparício',
+                email: 'julia-aparicio70@afsn.com.br',
+                senha: 'gD1Pm4zjZo',
+                permissao: 1,
+            });
 
-//     // it('FindOne notFound', async () => {
-//     //     const res = await request(app.getHttpServer())
-//     //         .get('/api/v1/school/student/findOne')
-//     //         .set('Authorization', token)
-//     //         .query({ nome: 'Alessandra Lavínia Jaqueline da Rosa' });
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toBe('Email já cadastrado');
+    });
 
-//     //     expect(res.statusCode).toBe(404);
-//     //     expect(res.body.message).toBe('Aluno não encontrado');
-//     // });
+    it('FindAll', async () => {
+        const res = await request(app.getHttpServer())
+            .get('/api/v1/school/employee/findAll')
+            .set('Authorization', token)
+            .send();
 
-//     it('Create', async () => {
-//         const res = await request(app.getHttpServer())
-//             .post('/api/v1/school/student/create')
-//             .set('Authorization', token)
-//             .send({
-//                 nome: 'Alessandra Lavínia Jaqueline da Rosa',
-//                 cpf: '03094550819',
-//                 telefone: '11986024259',
-//                 cep: '06090030',
-//                 numero: '421',
-//             });
+        expect(res.statusCode).toBe(200);
+        expect(res.body.length).toBe(2);
 
-//         expect(res.statusCode).toBe(201);
-//         expect(res.body).toStrictEqual({
-//             cod_aluno: 1,
-//             nome: 'ALESSANDRA LAVÍNIA JAQUELINE DA ROSA',
-//             cpf: '03094550819',
-//             telefone: '11986024259',
-//             cep: '06090030',
-//             estado: 'SP',
-//             cidade: 'OSASCO',
-//             bairro: 'CENTRO',
-//             rua: 'RUA AVELINO LOPES',
-//             numero: '421',
-//             complemento: null,
-//         });
-//     });
+        expect(res.body[0].cod_funcionario).toBe(1);
+        expect(res.body[0].nome).toBe('LORENA STEFANY FÁTIMA JESUS');
+        expect(res.body[0].email).toBe('lorena_jesus@school.com.br');
+        expect(res.body[0].senha).not.toBeNaN();
+        expect(res.body[0].senha).not.toBe('lorena123');
+        expect(res.body[0].permissao).toBe(2);
 
-//     it('FindAll', async () => {
-//         const res = await request(app.getHttpServer())
-//             .get('/api/v1/school/student/findAll')
-//             .send();
+        expect(res.body[1].cod_funcionario).toBe(2);
+        expect(res.body[1].nome).toBe('JULIA MARIANA LAVÍNIA APARÍCIO');
+        expect(res.body[1].email).toBe('julia-aparicio70@afsn.com.br');
+        expect(res.body[1].senha).not.toBeNaN();
+        expect(res.body[1].senha).not.toBe('gD1Pm4zjZo');
+        expect(res.body[1].permissao).toBe(1);
+    });
 
-//         expect(res.statusCode).toBe(200);
-//         expect(res.body).toStrictEqual([
-//             {
-//                 cod_aluno: 1,
-//                 nome: 'ALESSANDRA LAVÍNIA JAQUELINE DA ROSA',
-//                 cpf: '03094550819',
-//                 telefone: '11986024259',
-//                 cep: '06090030',
-//                 estado: 'SP',
-//                 cidade: 'OSASCO',
-//                 bairro: 'CENTRO',
-//                 rua: 'RUA AVELINO LOPES',
-//                 numero: '421',
-//                 complemento: null,
-//             },
-//         ]);
-//     });
+    it('FindOne', async () => {
+        const res = await request(app.getHttpServer())
+            .get('/api/v1/school/employee/findOne')
+            .set('Authorization', token)
+            .query({ cod_funcionario: 2 });
 
-//     it('FindOne', async () => {
-//         const res = await request(app.getHttpServer())
-//             .get('/api/v1/school/student/findOne')
-//             .query({ nome: 'Alessandra Lavínia Jaqueline da Rosa' });
+        expect(res.statusCode).toBe(200);
 
-//         expect(res.statusCode).toBe(200);
-//         expect(res.body).toStrictEqual({
-//             cod_aluno: 1,
-//             nome: 'ALESSANDRA LAVÍNIA JAQUELINE DA ROSA',
-//             cpf: '03094550819',
-//             telefone: '11986024259',
-//             cep: '06090030',
-//             estado: 'SP',
-//             cidade: 'OSASCO',
-//             bairro: 'CENTRO',
-//             rua: 'RUA AVELINO LOPES',
-//             numero: '421',
-//             complemento: null,
-//         });
-//     });
+        expect(res.body.cod_funcionario).toBe(2);
+        expect(res.body.nome).toBe('JULIA MARIANA LAVÍNIA APARÍCIO');
+        expect(res.body.email).toBe('julia-aparicio70@afsn.com.br');
+        expect(res.body.senha).not.toBeNaN();
+        expect(res.body.permissao).toBe(1);
+    });
 
-//     // it('Create CPF Existing', async () => {
-//     //     const res = await request(app.getHttpServer())
-//     //         .post('/api/v1/school/student/create')
-//     //         .send({
-//     //             nome: 'Ayla Aurora Francisca Fogaça',
-//     //             cpf: '03094550819',
-//     //             telefone: '11994028816',
-//     //             cep: '06090020',
-//     //             numero: '276',
-//     //         });
+    it('Update', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/employee/update')
+            .set('Authorization', token)
+            .query({ cod_funcionario: 2 })
+            .send({
+                email: 'julia-aparicio@afsn.com.br',
+                permissao: 2,
+            });
 
-//     //     expect(res.statusCode).toBe(400);
-//     //     expect(res.body.message).toBe('CPF já cadastrado');
-//     // });
+        expect(res.body.cod_funcionario).toBe(2);
+        expect(res.body.nome).toBe('JULIA MARIANA LAVÍNIA APARÍCIO');
+        expect(res.body.email).toBe('julia-aparicio@afsn.com.br');
+        expect(res.body.senha).not.toBeNaN();
+        expect(res.body.permissao).toBe(2);
+    });
 
-//     // it('Create CPF invalid', async () => {
-//     //     const res = await request(app.getHttpServer())
-//     //         .post('/api/v1/school/student/create')
-//     //         .send({
-//     //             nome: 'Ayla Aurora Francisca Fogaça',
-//     //             cpf: '00000000000',
-//     //             telefone: '11994028816',
-//     //             cep: '06090020',
-//     //             numero: '276',
-//     //         });
+    it('FindAll empty', async () => {
+        await prismaService.funcionario.deleteMany();
 
-//     //     expect(res.statusCode).toBe(400);
-//     //     expect(res.body.message).toBe('CPF inválido');
-//     // });
+        const res = await request(app.getHttpServer())
+            .get('/api/v1/school/employee/findAll')
+            .set('Authorization', token)
+            .send();
 
-//     // it('Create CEP invalid', async () => {
-//     //     const res = await request(app.getHttpServer())
-//     //         .post('/api/v1/school/student/create')
-//     //         .send({
-//     //             nome: 'Ayla Aurora Francisca Fogaça',
-//     //             cpf: '32645840850',
-//     //             telefone: '11994028816',
-//     //             cep: '06090022',
-//     //             numero: '276',
-//     //         });
+        expect(res.statusCode).toBe(404);
+        expect(res.body.message).toBe('Não existe funcionários cadastrados');
+    });
 
-//     //     expect(res.statusCode).toBe(400);
-//     //     expect(res.body.message).toBe(
-//     //         'CEP Inválido, será necessário passar o CEP, estado, cidade, bairro e rua',
-//     //     );
-//     // });
+    it('FindOne not found', async () => {
+        const res = await request(app.getHttpServer())
+            .get('/api/v1/school/employee/findOne')
+            .set('Authorization', token)
+            .query({ cod_funcionario: 2 });
 
-//     // it('Create CEP invalid with address data Valid', async () => {
-//     //     const res = await request(app.getHttpServer())
-//     //         .post('/api/v1/school/student/create')
-//     //         .send({
-//     //             nome: 'Ayla Aurora Francisca Fogaça',
-//     //             cpf: '32645840850',
-//     //             telefone: '11994028816',
-//     //             cep: '06090022',
-//     //             estado: 'SP',
-//     //             cidade: 'Osasco',
-//     //             bairro: 'Centro',
-//     //             rua: 'Avenida dos Autonomistas',
-//     //             numero: '276',
-//     //         });
+        expect(res.statusCode).toBe(404);
+        expect(res.body.message).toBe('Funcionário não encontrado');
+    });
 
-//     //     expect(res.statusCode).toBe(201);
-//     //     expect(res.body).toStrictEqual({
-//     //         cod_aluno: 2,
-//     //         nome: 'AYLA AURORA FRANCISCA FOGAÇA',
-//     //         cpf: '32645840850',
-//     //         telefone: '11994028816',
-//     //         cep: '06090022',
-//     //         estado: 'SP',
-//     //         cidade: 'OSASCO',
-//     //         bairro: 'CENTRO',
-//     //         rua: 'AVENIDA DOS AUTONOMISTAS',
-//     //         numero: '276',
-//     //         complemento: null,
-//     //     });
-//     // });
+    it('DTO', async () => {
+        const res = await request(app.getHttpServer())
+            .post('/api/v1/school/employee/create')
+            .set('Authorization', token)
+            .send();
 
-//     // it('Update', async () => {
-//     //     const res = await request(app.getHttpServer())
-//     //         .patch('/api/v1/school/student/update')
-//     //         .query({ nome: 'Ayla Aurora Francisca Fogaça' })
-//     //         .send({
-//     //             cpf: '77612538890',
-//     //             cep: '06090020',
-//     //             numero: '276',
-//     //         });
-
-//     //     expect(res.statusCode).toBe(200);
-//     //     expect(res.body).toStrictEqual({
-//     //         cod_aluno: 2,
-//     //         nome: 'AYLA AURORA FRANCISCA FOGAÇA',
-//     //         cpf: '77612538890',
-//     //         telefone: '11994028816',
-//     //         cep: '06090020',
-//     //         estado: 'SP',
-//     //         cidade: 'OSASCO',
-//     //         bairro: 'CENTRO',
-//     //         rua: 'AVENIDA DOS AUTONOMISTAS',
-//     //         numero: '276',
-//     //         complemento: null,
-//     //     });
-//     // });
-
-//     // it('Update CPF invalid', async () => {
-//     //     const res = await request(app.getHttpServer())
-//     //         .patch('/api/v1/school/student/update')
-//     //         .query({ nome: 'Ayla Aurora Francisca Fogaça' })
-//     //         .send({ cpf: '00000000000' });
-
-//     //     expect(res.statusCode).toBe(400);
-//     //     expect(res.body.message).toBe('CPF inválido');
-//     // });
-
-//     // it('Update CPF Existing', async () => {
-//     //     const res = await request(app.getHttpServer())
-//     //         .patch('/api/v1/school/student/update')
-//     //         .query({ nome: 'Ayla Aurora Francisca Fogaça' })
-//     //         .send({ cpf: '77612538890' });
-
-//     //     expect(res.statusCode).toBe(400);
-//     //     expect(res.body.message).toBe('CPF já cadastrado');
-//     // });
-
-//     // it('Update CEP without cep or number', async () => {
-//     //     const res = await request(app.getHttpServer())
-//     //         .patch('/api/v1/school/student/update')
-//     //         .query({ nome: 'Ayla Aurora Francisca Fogaça' })
-//     //         .send({
-//     //             rua: 'Rua Ux 2',
-//     //         });
-
-//     //     expect(res.statusCode).toBe(400);
-//     //     expect(res.body.message).toBe('CEP e número é obrigatório');
-//     // });
-
-//     // it('Update CEP invalid', async () => {
-//     //     const res = await request(app.getHttpServer())
-//     //         .patch('/api/v1/school/student/update')
-//     //         .query({ nome: 'Ayla Aurora Francisca Fogaça' })
-//     //         .send({
-//     //             cep: '13308299',
-//     //             numero: '824',
-//     //         });
-
-//     //     expect(res.statusCode).toBe(400);
-//     //     expect(res.body.message).toBe(
-//     //         'CEP Inválido, será necessário passar o CEP, estado, cidade, bairro, rua e número',
-//     //     );
-//     // });
-
-//     // it('Update CEP invalid with address data Valid', async () => {
-//     //     const res = await request(app.getHttpServer())
-//     //         .patch('/api/v1/school/student/update')
-//     //         .query({ nome: 'Ayla Aurora Francisca Fogaça' })
-//     //         .send({
-//     //             cep: '13308299',
-//     //             estado: 'sp',
-//     //             cidade: 'Osasco',
-//     //             bairro: 'Cidade Nova II',
-//     //             rua: 'Rua Ux 2',
-//     //             numero: '824',
-//     //         });
-
-//     //     expect(res.statusCode).toBe(200);
-//     //     expect(res.body).toStrictEqual({
-//     //         cod_aluno: 2,
-//     //         nome: 'AYLA AURORA FRANCISCA FOGAÇA',
-//     //         cpf: '77612538890',
-//     //         telefone: '11994028816',
-//     //         cep: '13308299',
-//     //         estado: 'SP',
-//     //         cidade: 'OSASCO',
-//     //         bairro: 'CIDADE NOVA II',
-//     //         rua: 'RUA UX 2',
-//     //         numero: '824',
-//     //         complemento: null,
-//     //     });
-//     // });
-
-//     // it('DTO', async () => {
-//     //     const res = await request(app.getHttpServer())
-//     //         .post('/api/v1/school/student/create')
-//     //         .send();
-
-//     //     expect(res.statusCode).toBe(400);
-//     //     expect(res.body.message).toStrictEqual([
-//     //         'Nome é obrigatório',
-//     //         'O nome deve ser passado nesse campo',
-//     //         'CPF é obrigatório',
-//     //         'O CPF deve conter 11 números',
-//     //         'Telefone é obrigatório',
-//     //         'O Telefone deve conter de 10 a 11 números incluindo o DDD',
-//     //         'CEP é obrigatório',
-//     //         'O CEP deve conter 8 números',
-//     //         'Número é obrigatório',
-//     //     ]);
-//     // });
-// });
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toStrictEqual([
+            'Nome é obrigatório',
+            'O nome deve ser passado nesse campo',
+            'Email é obrigatório',
+            'O email deve ser passado nesse campo',
+            'Senha é obrigatório',
+            'A senha deve ter no minimo 6 caracteres',
+        ]);
+    });
+});

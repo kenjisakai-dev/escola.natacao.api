@@ -1,7 +1,7 @@
 import {
+    BadRequestException,
     Injectable,
     NotFoundException,
-    UnauthorizedException,
 } from '@nestjs/common';
 import { EmployeeDTO, EmployeeUpdateDTO } from './dto/employee.dto';
 import { PrismaService } from '../../prisma/prisma.service';
@@ -23,7 +23,7 @@ export class EmployeeService {
         });
 
         if (email) {
-            throw new UnauthorizedException('Email já cadastrado');
+            throw new BadRequestException('Email já cadastrado');
         }
 
         data.senha = await hash(data.senha, 10);
@@ -46,7 +46,7 @@ export class EmployeeService {
             });
 
             if (email) {
-                throw new UnauthorizedException('Email já cadastrado');
+                throw new BadRequestException('Email já cadastrado');
             }
         }
 
