@@ -1,16 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { ClassDTO, ClassUpdateDTO } from './dto/class.dto';
+import { TeamDTO, TeamUpdateDTO } from './dto/team.dto';
 import { ModalityTeacherService } from '../modality-teacher/modality-teacher.service';
 
 @Injectable()
-export class ClassService {
+export class TeamService {
     constructor(
         private readonly prismaService: PrismaService,
         private readonly modalityTeacher: ModalityTeacherService,
     ) {}
 
-    async create(data: ClassDTO) {
+    async create(data: TeamDTO) {
         const { cod_modalidade_professor } = data;
 
         await this.modalityTeacher.findOne(cod_modalidade_professor);
@@ -20,7 +20,7 @@ export class ClassService {
         });
     }
 
-    async update(cod_turma: number, data: ClassUpdateDTO) {
+    async update(cod_turma: number, data: TeamUpdateDTO) {
         const { cod_modalidade_professor } = data;
 
         if (cod_modalidade_professor) {

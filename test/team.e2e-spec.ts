@@ -4,7 +4,7 @@ import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../prisma/prisma.service';
 
-describe('ClassController (e2e)', () => {
+describe('TeamController (e2e)', () => {
     let app: INestApplication;
     let prismaService: PrismaService;
     let token: string;

@@ -1,21 +1,21 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { RegistrationDTO, RegistrationUpdateDTO } from './dto/registration.dto';
-import { ClassService } from '../class_/class.service';
 import { StudentService } from '../student/student.service';
+import { TeamService } from '../team/team.service';
 
 @Injectable()
 export class RegistrationService {
     constructor(
         private readonly prismaService: PrismaService,
-        private readonly classService: ClassService,
+        private readonly teamService: TeamService,
         private readonly studentService: StudentService,
     ) {}
 
     async create(data: RegistrationDTO) {
         const { cod_turma, cod_aluno } = data;
 
-        await this.classService.findOne(cod_turma);
+        await this.teamService.findOne(cod_turma);
         await this.studentService.findOne(cod_aluno);
 
         return await this.prismaService.matricula.create({
@@ -33,7 +33,7 @@ export class RegistrationService {
         }
 
         if (cod_turma) {
-            await this.classService.findOne(cod_turma);
+            await this.teamService.findOne(cod_turma);
         }
 
         return await this.prismaService.matricula.update({

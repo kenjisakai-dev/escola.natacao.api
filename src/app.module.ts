@@ -3,8 +3,8 @@ import { StudentModule } from './student/student.module';
 import { TeacherModule } from './teacher/teacher.module';
 import { ModalityModule } from './modality/modality.module';
 import { ModalityTeacherModule } from './modality-teacher/modality-teacher.module';
-import { ClassModule } from './class_/class.module';
-import { RegistrationModule } from './matricula/registration.module';
+import { TeamModule } from './team/team.module';
+import { RegistrationModule } from './registration/registration.module';
 import { FrequencyModule } from './frequency/frequency.module';
 import { AuthModule } from './auth/auth.module';
 import { EmployeeModule } from './employee/employee.module';
@@ -15,7 +15,7 @@ import { EmployeeModule } from './employee/employee.module';
         TeacherModule,
         ModalityModule,
         ModalityTeacherModule,
-        ClassModule,
+        TeamModule,
         RegistrationModule,
         FrequencyModule,
         AuthModule,

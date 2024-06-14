@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { ClassController } from './class.controller';
-import { ClassService } from './class.service';
+import { TeamController } from './team.controller';
+import { TeamService } from './team.service';
 import { PrismaModule } from '../../prisma/prisma.module';
 import { ModalityTeacherModule } from '../modality-teacher/modality-teacher.module';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
     imports: [PrismaModule, ModalityTeacherModule, AuthModule],
-    controllers: [ClassController],
-    providers: [ClassService],
-    exports: [ClassService],
+    controllers: [TeamController],
+    providers: [TeamService],
+    exports: [TeamService],
 })
-export class ClassModule {}
+export class TeamModule {}

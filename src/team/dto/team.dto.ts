@@ -2,7 +2,7 @@ import { PartialType } from '@nestjs/mapped-types';
 import { Transform } from 'class-transformer';
 import { IsDefined, IsString } from 'class-validator';
 
-export class ClassDTO {
+export class TeamDTO {
     @Transform(({ value }) => value.toUpperCase())
     @IsString({ message: 'O nome da turma deve ser passado nesse campo' })
     @IsDefined({ message: 'Nome da turma é obrigatório' })
@@ -18,4 +18,4 @@ export class ClassDTO {
     cod_modalidade_professor: number;
 }
 
-export class ClassUpdateDTO extends PartialType(ClassDTO) {}
+export class TeamUpdateDTO extends PartialType(TeamDTO) {}
