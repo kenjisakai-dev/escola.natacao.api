@@ -13,7 +13,7 @@ export class AuthService {
     ) {}
 
     createToken(data: funcionario) {
-        const { cod_funcionario, nome, email } = data;
+        const { cod_funcionario, nome, email, permissao } = data;
 
         return {
             acessToken: this.jwtService.sign(
@@ -21,6 +21,7 @@ export class AuthService {
                     cod_funcionario,
                     nome,
                     email,
+                    permissao,
                 },
                 {
                     expiresIn: '7 days',

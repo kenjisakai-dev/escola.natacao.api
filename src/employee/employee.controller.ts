@@ -10,8 +10,12 @@ import {
 import { EmployeeService } from './employee.service';
 import { EmployeeDTO, EmployeeUpdateDTO } from './dto/employee.dto';
 import { AuthGuard } from '../guards/auth.guard';
+import { PermissionsGuard } from '../guards/permission.guard';
+import { Permissions } from './decorator/permissions.decorator';
+import { Permission } from './enum/permission.enum';
 
-@UseGuards(AuthGuard)
+@Permissions(Permission.ADMIN)
+@UseGuards(AuthGuard, PermissionsGuard)
 @Controller('api/v1/school/employee')
 export class EmployeeController {
     constructor(private readonly employeeService: EmployeeService) {}
