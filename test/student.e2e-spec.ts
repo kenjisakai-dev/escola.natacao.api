@@ -94,6 +94,7 @@ describe('StudentController (e2e)', () => {
             rua: 'RUA AVELINO LOPES',
             numero: '421',
             complemento: null,
+            status: true,
         });
     });
 
@@ -117,6 +118,7 @@ describe('StudentController (e2e)', () => {
                 rua: 'RUA AVELINO LOPES',
                 numero: '421',
                 complemento: null,
+                status: true,
             },
         ]);
     });
@@ -140,51 +142,52 @@ describe('StudentController (e2e)', () => {
             rua: 'RUA AVELINO LOPES',
             numero: '421',
             complemento: null,
+            status: true,
         });
     });
 
-    it('CPF Existing', async () => {
+    it('Create - CPF Existing', async () => {
         const res = await request(app.getHttpServer())
             .post('/api/v1/school/student/create')
             .set('Authorization', token)
             .send({
-                nome: 'Ayla Aurora Francisca Fogaça',
+                nome: 'AAA',
                 cpf: '03094550819',
-                telefone: '11994028816',
-                cep: '06090020',
-                numero: '276',
+                telefone: '00000000000',
+                cep: '00000000',
+                numero: '000',
             });
 
         expect(res.statusCode).toBe(400);
         expect(res.body.message).toBe('CPF já cadastrado');
     });
 
-    it('CPF invalid', async () => {
+    it('Create - CPF invalid', async () => {
         const res = await request(app.getHttpServer())
             .post('/api/v1/school/student/create')
             .set('Authorization', token)
             .send({
-                nome: 'Ayla Aurora Francisca Fogaça',
+                nome: 'AAA',
                 cpf: '00000000000',
-                telefone: '11994028816',
-                cep: '06090020',
-                numero: '276',
+                telefone: '00000000000',
+                cep: '00000000',
+                numero: '000',
             });
 
         expect(res.statusCode).toBe(400);
         expect(res.body.message).toBe('CPF inválido');
     });
 
-    it('CEP invalid', async () => {
+    it('Create - CEP invalid', async () => {
         const res = await request(app.getHttpServer())
             .post('/api/v1/school/student/create')
             .set('Authorization', token)
             .send({
-                nome: 'Ayla Aurora Francisca Fogaça',
+                nome: 'AAA',
                 cpf: '32645840850',
-                telefone: '11994028816',
-                cep: '06090022',
-                numero: '276',
+                telefone: '00000000000',
+                cep: '00000000',
+                numero: '000',
             });
 
         expect(res.statusCode).toBe(400);
@@ -193,7 +196,7 @@ describe('StudentController (e2e)', () => {
         );
     });
 
-    it('CEP invalid with address data valids', async () => {
+    it('Create - CEP invalid with address data valids', async () => {
         const res = await request(app.getHttpServer())
             .post('/api/v1/school/student/create')
             .set('Authorization', token)
@@ -201,7 +204,7 @@ describe('StudentController (e2e)', () => {
                 nome: 'Ayla Aurora Francisca Fogaça',
                 cpf: '32645840850',
                 telefone: '11994028816',
-                cep: '06090022',
+                cep: '00000000',
                 estado: 'SP',
                 cidade: 'Osasco',
                 bairro: 'Centro',
@@ -215,13 +218,14 @@ describe('StudentController (e2e)', () => {
             nome: 'AYLA AURORA FRANCISCA FOGAÇA',
             cpf: '32645840850',
             telefone: '11994028816',
-            cep: '06090022',
+            cep: '00000000',
             estado: 'SP',
             cidade: 'OSASCO',
             bairro: 'CENTRO',
             rua: 'AVENIDA DOS AUTONOMISTAS',
             numero: '276',
             complemento: null,
+            status: true,
         });
     });
 
@@ -234,6 +238,7 @@ describe('StudentController (e2e)', () => {
                 cpf: '77612538890',
                 cep: '06090020',
                 numero: '276',
+                status: false,
             });
 
         expect(res.statusCode).toBe(200);
@@ -249,22 +254,110 @@ describe('StudentController (e2e)', () => {
             rua: 'AVENIDA DOS AUTONOMISTAS',
             numero: '276',
             complemento: null,
+            status: false,
         });
     });
 
-    it('Update CEP without cep or number residential', async () => {
+    it('Update - CPF Existing', async () => {
         const res = await request(app.getHttpServer())
             .patch('/api/v1/school/student/update')
             .set('Authorization', token)
             .query({ cod_aluno: 2 })
             .send({
-                rua: 'Rua Ux 2',
+                nome: 'AAA',
+                cpf: '77612538890',
+                telefone: '00000000000',
+                cep: '00000000',
+                numero: '000',
+            });
+
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toBe('CPF já cadastrado');
+    });
+
+    it('Update - CPF invalid', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/student/update')
+            .set('Authorization', token)
+            .query({ cod_aluno: 2 })
+            .send({
+                nome: 'AAA',
+                cpf: '00000000000',
+                telefone: '00000000000',
+                cep: '00000000',
+                numero: '000',
+            });
+
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toBe('CPF inválido');
+    });
+
+    it('Update - CEP invalid', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/student/update')
+            .set('Authorization', token)
+            .query({ cod_aluno: 2 })
+            .send({
+                nome: 'AAA',
+                cpf: '32645840850',
+                telefone: '00000000000',
+                cep: '00000000',
+                numero: '000',
+            });
+
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toBe(
+            'CEP Inválido, será necessário passar o estado, cidade, bairro, rua e número junto com o CEP',
+        );
+    });
+
+    it('Update - CEP without cep or number residential', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/student/update')
+            .set('Authorization', token)
+            .query({ cod_aluno: 2 })
+            .send({
+                rua: 'AAA',
             });
 
         expect(res.statusCode).toBe(400);
         expect(res.body.message).toBe(
             'O CEP e número residencial é obrigatório',
         );
+    });
+
+    it('Update - CEP invalid with address data valids', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/student/update')
+            .set('Authorization', token)
+            .query({ cod_aluno: 2 })
+            .send({
+                nome: 'Ayla Aurora Francisca Fogaça',
+                cpf: '32645840850',
+                telefone: '11994028816',
+                cep: '00000000',
+                estado: 'SP',
+                cidade: 'Osasco',
+                bairro: 'Centro',
+                rua: 'Avenida dos Autonomistas',
+                numero: '276',
+            });
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toStrictEqual({
+            cod_aluno: 2,
+            nome: 'AYLA AURORA FRANCISCA FOGAÇA',
+            cpf: '32645840850',
+            telefone: '11994028816',
+            cep: '00000000',
+            estado: 'SP',
+            cidade: 'OSASCO',
+            bairro: 'CENTRO',
+            rua: 'AVENIDA DOS AUTONOMISTAS',
+            numero: '276',
+            complemento: null,
+            status: false,
+        });
     });
 
     it('DTO', async () => {

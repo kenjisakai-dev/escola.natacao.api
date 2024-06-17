@@ -19,6 +19,7 @@ model aluno {
   rua         String      @db.VarChar(127)
   numero      String      @db.VarChar(127)
   complemento String?     @db.VarChar(127)
+  status      Boolean     @default(true)
   matricula   matricula[]
 }
 

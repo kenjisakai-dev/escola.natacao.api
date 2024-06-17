@@ -65,6 +65,7 @@ export class StudentService {
             rua,
             numero,
             complemento,
+            status,
         } = data;
 
         if (cpf) {
@@ -98,12 +99,13 @@ export class StudentService {
                 cpf,
                 telefone,
                 cep,
-                estado: address.estado,
-                cidade: address.cidade,
-                bairro: address.bairro,
-                rua: address.rua,
+                estado: address?.estado,
+                cidade: address?.cidade,
+                bairro: address?.bairro,
+                rua: address?.rua,
                 numero,
                 complemento,
+                status,
             },
         });
     }
