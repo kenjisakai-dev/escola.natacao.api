@@ -14,8 +14,8 @@ import { PermissionsGuard } from '../guards/permission.guard';
 import { Permissions } from './decorator/permissions.decorator';
 import { Permission } from './enum/permission.enum';
 
-// @Permissions(Permission.ADMIN)
-// @UseGuards(AuthGuard, PermissionsGuard)
+@Permissions(Permission.ADMIN)
+@UseGuards(AuthGuard, PermissionsGuard)
 @Controller('api/v1/school/employee')
 export class EmployeeController {
     constructor(private readonly employeeService: EmployeeService) {}
