@@ -1,6 +1,7 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { Transform } from 'class-transformer';
 import {
+    IsBoolean,
     IsDefined,
     IsEmail,
     IsEnum,
@@ -41,4 +42,11 @@ export class EmployeeDTO {
     permissao?: number;
 }
 
-export class EmployeeUpdateDTO extends PartialType(EmployeeDTO) {}
+export class EmployeeUpdateDTO extends PartialType(EmployeeDTO) {
+    @Transform(({ value }) => Boolean(value))
+    @IsBoolean({
+        message: 'O status do funcionário deve ser passado nesse campo',
+    })
+    @IsOptional()
+    status?: boolean;
+}

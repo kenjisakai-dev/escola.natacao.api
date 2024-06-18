@@ -4,7 +4,10 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { ModalityTeacherDTO } from './dto/modality-teacher.dto';
+import {
+    ModalityTeacherDTO,
+    ModalityTeacherUpdateDTO,
+} from './dto/modality-teacher.dto';
 import { TeacherService } from '../teacher/teacher.service';
 import { ModalityService } from '../modality/modality.service';
 
@@ -37,10 +40,43 @@ export class ModalityTeacherService {
         }
 
         return await this.prismaService.modalidade_professor.create({
-            data: {
-                cod_professor,
-                cod_modalidade,
-            },
+            data,
+        });
+    }
+
+    async update(
+        cod_modalidade_professor: number,
+        data: ModalityTeacherUpdateDTO,
+    ) {
+        await this.findOne(cod_modalidade_professor);
+
+        const { cod_professor, cod_modalidade } = data;
+
+        if (cod_professor) {
+            await this.teacherService.findOne(cod_professor);
+        }
+
+        if (cod_modalidade) {
+            await this.modalityService.findOne(cod_modalidade);
+        }
+
+        const modality =
+            await this.prismaService.modalidade_professor.findFirst({
+                where: {
+                    cod_professor,
+                    cod_modalidade,
+                },
+            });
+
+        if (modality) {
+            throw new BadRequestException(
+                'Vinculo entre professor e modalidade já existente',
+            );
+        }
+
+        return await this.prismaService.modalidade_professor.update({
+            where: { cod_modalidade_professor },
+            data,
         });
     }
 

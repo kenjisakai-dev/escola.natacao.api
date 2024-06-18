@@ -31,6 +31,18 @@ export class ModalityService {
     async update(cod_modalidade: number, data: ModalityUpdateDTO) {
         await this.findOne(cod_modalidade);
 
+        const { descricao = '' } = data;
+
+        const modality = await this.prismaService.modalidade.findFirst({
+            where: {
+                descricao,
+            },
+        });
+
+        if (modality) {
+            throw new BadRequestException('Modalidade já existente');
+        }
+
         return await this.prismaService.modalidade.update({
             where: {
                 cod_modalidade,

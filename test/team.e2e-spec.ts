@@ -127,17 +127,18 @@ describe('TeamController (e2e)', () => {
             nome: 'NATAÇÃO A2',
             horarios: 'SEG/QUA - 09:00 ÀS 10:00',
             cod_modalidade_professor: 1,
+            status: true,
         });
     });
 
-    it('Cod_mod_tea dont exist', async () => {
+    it('Create - Cod-modality-teacher notFound', async () => {
         const res = await request(app.getHttpServer())
             .post('/api/v1/school/class/create')
             .set('Authorization', token)
             .send({
-                nome: 'Natação A2',
-                horarios: 'seg/qua - 09:00 às 10:00',
-                cod_modalidade_professor: 5,
+                nome: 'AAA',
+                horarios: '00:00',
+                cod_modalidade_professor: 1000,
             });
 
         expect(res.statusCode).toBe(404);
@@ -159,6 +160,7 @@ describe('TeamController (e2e)', () => {
                 nome: 'NATAÇÃO A2',
                 horarios: 'SEG/QUA - 09:00 ÀS 10:00',
                 cod_modalidade_professor: 1,
+                status: true,
             },
         ]);
     });
@@ -175,6 +177,7 @@ describe('TeamController (e2e)', () => {
             nome: 'NATAÇÃO A2',
             horarios: 'SEG/QUA - 09:00 ÀS 10:00',
             cod_modalidade_professor: 1,
+            status: true,
         });
     });
 
@@ -185,6 +188,7 @@ describe('TeamController (e2e)', () => {
             .query({ cod_turma: 1 })
             .send({
                 cod_modalidade_professor: 2,
+                status: false,
             });
 
         expect(res.statusCode).toBe(200);
@@ -193,7 +197,25 @@ describe('TeamController (e2e)', () => {
             nome: 'NATAÇÃO A2',
             horarios: 'SEG/QUA - 09:00 ÀS 10:00',
             cod_modalidade_professor: 2,
+            status: false,
         });
+    });
+
+    it('Update - Cod-modality-teacher notFound', async () => {
+        const res = await request(app.getHttpServer())
+            .post('/api/v1/school/class/create')
+            .set('Authorization', token)
+            .query({ cod_turma: 1 })
+            .send({
+                nome: 'AAA',
+                horarios: '00:00',
+                cod_modalidade_professor: 1000,
+            });
+
+        expect(res.statusCode).toBe(404);
+        expect(res.body.message).toBe(
+            'Registro do professor na Modalidade não encontrado',
+        );
     });
 
     it('DTO', async () => {

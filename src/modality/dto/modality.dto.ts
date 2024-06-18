@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { Transform } from 'class-transformer';
-import { IsDefined, IsString } from 'class-validator';
+import { IsBoolean, IsDefined, IsOptional, IsString } from 'class-validator';
 
 export class ModalityDTO {
     @Transform(({ value }) => value.toUpperCase())
@@ -11,4 +11,9 @@ export class ModalityDTO {
     descricao: string;
 }
 
-export class ModalityUpdateDTO extends PartialType(ModalityDTO) {}
+export class ModalityUpdateDTO extends PartialType(ModalityDTO) {
+    @Transform(({ value }) => Boolean(value))
+    @IsBoolean({ message: 'O status do aluno deve ser passado nesse campo' })
+    @IsOptional()
+    status?: boolean;
+}

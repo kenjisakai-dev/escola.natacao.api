@@ -66,6 +66,13 @@ describe('ModalityTeacherController (e2e)', () => {
             .send({
                 descricao: 'Natação',
             });
+
+        await request(app.getHttpServer())
+            .post('/api/v1/school/modality/create')
+            .set('Authorization', token)
+            .send({
+                descricao: 'Hidroginástica',
+            });
     });
 
     it('FindAll empty', async () => {
@@ -106,10 +113,37 @@ describe('ModalityTeacherController (e2e)', () => {
             cod_modalidade_professor: 1,
             cod_modalidade: 1,
             cod_professor: 1,
+            status: true,
         });
     });
 
-    it('Create duplicate', async () => {
+    it('Create - Modality notFound', async () => {
+        const res = await request(app.getHttpServer())
+            .post('/api/v1/school/modality/teacher/create')
+            .set('Authorization', token)
+            .send({
+                cod_modalidade: 1000,
+                cod_professor: 1,
+            });
+
+        expect(res.statusCode).toBe(404);
+        expect(res.body.message).toBe('Modalidade não encontrada');
+    });
+
+    it('Create - Teacher notFound', async () => {
+        const res = await request(app.getHttpServer())
+            .post('/api/v1/school/modality/teacher/create')
+            .set('Authorization', token)
+            .send({
+                cod_modalidade: 1,
+                cod_professor: 1000,
+            });
+
+        expect(res.statusCode).toBe(404);
+        expect(res.body.message).toBe('Professor não encontrado');
+    });
+
+    it('Create - Register existing', async () => {
         const res = await request(app.getHttpServer())
             .post('/api/v1/school/modality/teacher/create')
             .set('Authorization', token)
@@ -136,6 +170,7 @@ describe('ModalityTeacherController (e2e)', () => {
                 cod_modalidade_professor: 1,
                 cod_modalidade: 1,
                 cod_professor: 1,
+                status: true,
             },
         ]);
     });
@@ -151,7 +186,72 @@ describe('ModalityTeacherController (e2e)', () => {
             cod_modalidade_professor: 1,
             cod_modalidade: 1,
             cod_professor: 1,
+            status: true,
         });
+    });
+
+    it('Update', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/modality/teacher/update')
+            .set('Authorization', token)
+            .query({ cod_modalidade_professor: 1 })
+            .send({
+                cod_modalidade: 2,
+                cod_professor: 1,
+                status: false,
+            });
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toStrictEqual({
+            cod_modalidade_professor: 1,
+            cod_modalidade: 2,
+            cod_professor: 1,
+            status: false,
+        });
+    });
+
+    it('Update - Modality notFound', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/modality/teacher/update')
+            .set('Authorization', token)
+            .query({ cod_modalidade_professor: 1 })
+            .send({
+                cod_modalidade: 1000,
+                cod_professor: 1,
+            });
+
+        expect(res.statusCode).toBe(404);
+        expect(res.body.message).toBe('Modalidade não encontrada');
+    });
+
+    it('Update - Teacher notFound', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/modality/teacher/update')
+            .set('Authorization', token)
+            .query({ cod_modalidade_professor: 1 })
+            .send({
+                cod_modalidade: 1,
+                cod_professor: 1000,
+            });
+
+        expect(res.statusCode).toBe(404);
+        expect(res.body.message).toBe('Professor não encontrado');
+    });
+
+    it('Update - Register existing', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/modality/teacher/update')
+            .set('Authorization', token)
+            .query({ cod_modalidade_professor: 1 })
+            .send({
+                cod_modalidade: 2,
+                cod_professor: 1,
+            });
+
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toBe(
+            'Vinculo entre professor e modalidade já existente',
+        );
     });
 
     it('DTO', async () => {

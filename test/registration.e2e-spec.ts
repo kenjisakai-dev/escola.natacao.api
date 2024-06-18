@@ -171,7 +171,36 @@ describe('RegistrationController (e2e)', () => {
             data_matricula: '2024-06-07T00:00:00.000Z',
             cod_turma: 1,
             cod_aluno: 1,
+            status: true,
         });
+    });
+
+    it('Create - Student notFound ', async () => {
+        const res = await request(app.getHttpServer())
+            .post('/api/v1/school/registration/create')
+            .set('Authorization', token)
+            .send({
+                data_matricula: '2024-06-07',
+                cod_turma: 1,
+                cod_aluno: 1000,
+            });
+
+        expect(res.statusCode).toBe(404);
+        expect(res.body.message).toBe('Aluno não encontrado');
+    });
+
+    it('Create - Team notFound ', async () => {
+        const res = await request(app.getHttpServer())
+            .post('/api/v1/school/registration/create')
+            .set('Authorization', token)
+            .send({
+                data_matricula: '2024-06-07',
+                cod_turma: 1000,
+                cod_aluno: 1,
+            });
+
+        expect(res.statusCode).toBe(404);
+        expect(res.body.message).toBe('Turma não encontrada');
     });
 
     it('FindAll', async () => {
@@ -187,6 +216,7 @@ describe('RegistrationController (e2e)', () => {
                 data_matricula: '2024-06-07T00:00:00.000Z',
                 cod_turma: 1,
                 cod_aluno: 1,
+                status: true,
             },
         ]);
     });
@@ -203,6 +233,7 @@ describe('RegistrationController (e2e)', () => {
             data_matricula: '2024-06-07T00:00:00.000Z',
             cod_turma: 1,
             cod_aluno: 1,
+            status: true,
         });
     });
 
@@ -215,6 +246,7 @@ describe('RegistrationController (e2e)', () => {
                 data_matricula: '2024-06-06',
                 cod_turma: 2,
                 cod_aluno: 2,
+                status: false,
             });
 
         expect(res.statusCode).toBe(200);
@@ -223,7 +255,36 @@ describe('RegistrationController (e2e)', () => {
             data_matricula: '2024-06-06T00:00:00.000Z',
             cod_turma: 2,
             cod_aluno: 2,
+            status: false,
         });
+    });
+
+    it('Update - Student notFound ', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/registration/update')
+            .set('Authorization', token)
+            .query({ cod_matricula: 1 })
+            .send({
+                cod_turma: 1,
+                cod_aluno: 1000,
+            });
+
+        expect(res.statusCode).toBe(404);
+        expect(res.body.message).toBe('Aluno não encontrado');
+    });
+
+    it('Update - Team notFound ', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/registration/update')
+            .set('Authorization', token)
+            .query({ cod_matricula: 1 })
+            .send({
+                cod_turma: 1000,
+                cod_aluno: 1,
+            });
+
+        expect(res.statusCode).toBe(404);
+        expect(res.body.message).toBe('Turma não encontrada');
     });
 
     it('DTO', async () => {

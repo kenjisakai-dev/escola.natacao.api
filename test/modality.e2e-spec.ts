@@ -79,7 +79,19 @@ describe('ModalityController (e2e)', () => {
         expect(res.body).toStrictEqual({
             cod_modalidade: 1,
             descricao: 'NATAÇÃO',
+            status: true,
         });
+    });
+
+    it('Create - Modality existing', async () => {
+        const res = await request(app.getHttpServer())
+            .post('/api/v1/school/modality/create')
+            .send({
+                descricao: 'Natação',
+            });
+
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toBe('Modalidade já existente');
     });
 
     it('FindAll', async () => {
@@ -92,6 +104,7 @@ describe('ModalityController (e2e)', () => {
             {
                 cod_modalidade: 1,
                 descricao: 'NATAÇÃO',
+                status: true,
             },
         ]);
     });
@@ -106,6 +119,7 @@ describe('ModalityController (e2e)', () => {
         expect(res.body).toStrictEqual({
             cod_modalidade: 1,
             descricao: 'NATAÇÃO',
+            status: true,
         });
     });
 
@@ -116,13 +130,27 @@ describe('ModalityController (e2e)', () => {
             .query({ cod_modalidade: 1 })
             .send({
                 descricao: 'Natação I',
+                status: false,
             });
 
         expect(res.statusCode).toBe(200);
         expect(res.body).toStrictEqual({
             cod_modalidade: 1,
             descricao: 'NATAÇÃO I',
+            status: false,
         });
+    });
+
+    it('Update - Modality existing', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/modality/update')
+            .query({ cod_modalidade: 1 })
+            .send({
+                descricao: 'NATAÇÃO I',
+            });
+
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toBe('Modalidade já existente');
     });
 
     it('DTO', async () => {

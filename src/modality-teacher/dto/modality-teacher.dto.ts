@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsDefined, IsInt } from 'class-validator';
+import { IsBoolean, IsDefined, IsInt, IsOptional } from 'class-validator';
 
 export class ModalityTeacherDTO {
     @Transform(({ value }) => Number(value))
@@ -11,4 +11,13 @@ export class ModalityTeacherDTO {
     @IsInt({ message: 'O código da modalidade deve ser passado nesse campo' })
     @IsDefined({ message: 'Código da modalidade é obrigatório' })
     cod_modalidade: number;
+}
+
+export class ModalityTeacherUpdateDTO extends ModalityTeacherDTO {
+    @Transform(({ value }) => Boolean(value))
+    @IsBoolean({
+        message: 'O status do professor deve ser passado nesse campo',
+    })
+    @IsOptional()
+    status?: boolean;
 }

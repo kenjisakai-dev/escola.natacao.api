@@ -1,6 +1,12 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { Transform } from 'class-transformer';
-import { IsDate, IsDefined, IsInt, IsOptional } from 'class-validator';
+import {
+    IsBoolean,
+    IsDate,
+    IsDefined,
+    IsInt,
+    IsOptional,
+} from 'class-validator';
 
 export class RegistrationDTO {
     @Transform(({ value }) => (value ? new Date(value) : new Date()))
@@ -20,4 +26,9 @@ export class RegistrationDTO {
     cod_aluno: number;
 }
 
-export class RegistrationUpdateDTO extends PartialType(RegistrationDTO) {}
+export class RegistrationUpdateDTO extends PartialType(RegistrationDTO) {
+    @Transform(({ value }) => Boolean(value))
+    @IsBoolean({ message: 'O status do aluno deve ser passado nesse campo' })
+    @IsOptional()
+    status?: boolean;
+}

@@ -87,6 +87,7 @@ describe('TeacherController (e2e)', () => {
             cpf: '43795242800',
             telefone: '11985315760',
             data_admissao: '2024-06-03T00:00:00.000Z',
+            status: true,
         });
     });
 
@@ -104,6 +105,7 @@ describe('TeacherController (e2e)', () => {
                 cpf: '43795242800',
                 telefone: '11985315760',
                 data_admissao: '2024-06-03T00:00:00.000Z',
+                status: true,
             },
         ]);
     });
@@ -120,10 +122,11 @@ describe('TeacherController (e2e)', () => {
             cpf: '43795242800',
             telefone: '11985315760',
             data_admissao: '2024-06-03T00:00:00.000Z',
+            status: true,
         });
     });
 
-    it('CPF Existing', async () => {
+    it('Create - CPF Existing', async () => {
         const res = await request(app.getHttpServer())
             .post('/api/v1/school/teacher/create')
             .set('Authorization', token)
@@ -138,14 +141,14 @@ describe('TeacherController (e2e)', () => {
         expect(res.body.message).toBe('CPF já cadastrado');
     });
 
-    it('CPF invalid', async () => {
+    it('Create - CPF invalid', async () => {
         const res = await request(app.getHttpServer())
             .post('/api/v1/school/teacher/create')
             .set('Authorization', token)
             .send({
-                nome: 'Analu Emanuelly Isabel Nascimento',
+                nome: 'AAA',
                 cpf: '00000000000',
-                telefone: '15982530950',
+                telefone: '00000000000',
                 data_admissao: '2024-06-03',
             });
 
@@ -163,6 +166,7 @@ describe('TeacherController (e2e)', () => {
                 cpf: '91908933879',
                 telefone: '11994339691',
                 data_admissao: '2024-06-04',
+                status: false,
             });
 
         expect(res.statusCode).toBe(200);
@@ -172,7 +176,40 @@ describe('TeacherController (e2e)', () => {
             cpf: '91908933879',
             telefone: '11994339691',
             data_admissao: '2024-06-04T00:00:00.000Z',
+            status: false,
         });
+    });
+
+    it('Update - CPF Existing', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/teacher/update')
+            .set('Authorization', token)
+            .query({ cod_professor: 1 })
+            .send({
+                nome: 'Analu Emanuelly Isabel Nascimento',
+                cpf: '91908933879',
+                telefone: '15982530950',
+                data_admissao: '2024-06-03',
+            });
+
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toBe('CPF já cadastrado');
+    });
+
+    it('Update - CPF invalid', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/teacher/update')
+            .set('Authorization', token)
+            .query({ cod_professor: 1 })
+            .send({
+                nome: 'AAA',
+                cpf: '00000000000',
+                telefone: '00000000000',
+                data_admissao: '2024-06-03',
+            });
+
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toBe('CPF inválido');
     });
 
     it('DTO', async () => {

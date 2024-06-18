@@ -1,6 +1,7 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { Transform } from 'class-transformer';
 import {
+    IsBoolean,
     IsDate,
     IsDefined,
     IsOptional,
@@ -36,4 +37,11 @@ export class TeacherDTO {
     data_admissao?: Date;
 }
 
-export class TeacherUpdateDTO extends PartialType(TeacherDTO) {}
+export class TeacherUpdateDTO extends PartialType(TeacherDTO) {
+    @Transform(({ value }) => Boolean(value))
+    @IsBoolean({
+        message: 'O status do professor deve ser passado nesse campo',
+    })
+    @IsOptional()
+    status?: boolean;
+}

@@ -62,9 +62,10 @@ describe('EmployeeController (e2e)', () => {
 
         expect(res.statusCode).toBe(201);
         expect(res.body.acessToken).not.toBeNull();
+        expect(typeof res.body.acessToken).toBe('string');
     });
 
-    it('Existing CPF', async () => {
+    it('Create - Email existing', async () => {
         const res = await request(app.getHttpServer())
             .post('/api/v1/school/employee/create')
             .set('Authorization', token)
@@ -94,6 +95,7 @@ describe('EmployeeController (e2e)', () => {
         expect(res.body[0].senha).not.toBeNaN();
         expect(res.body[0].senha).not.toBe('lorena123');
         expect(res.body[0].permissao).toBe(2);
+        expect(res.body[0].status).toBe(true);
 
         expect(res.body[1].cod_funcionario).toBe(2);
         expect(res.body[1].nome).toBe('JULIA MARIANA LAVÍNIA APARÍCIO');
@@ -101,6 +103,7 @@ describe('EmployeeController (e2e)', () => {
         expect(res.body[1].senha).not.toBeNaN();
         expect(res.body[1].senha).not.toBe('gD1Pm4zjZo');
         expect(res.body[1].permissao).toBe(1);
+        expect(res.body[1].status).toBe(true);
     });
 
     it('FindOne', async () => {
@@ -126,6 +129,7 @@ describe('EmployeeController (e2e)', () => {
             .send({
                 email: 'julia-aparicio@afsn.com.br',
                 permissao: 2,
+                status: false,
             });
 
         expect(res.body.cod_funcionario).toBe(2);
@@ -133,6 +137,23 @@ describe('EmployeeController (e2e)', () => {
         expect(res.body.email).toBe('julia-aparicio@afsn.com.br');
         expect(res.body.senha).not.toBeNaN();
         expect(res.body.permissao).toBe(2);
+        expect(res.body.status).toBe(false);
+    });
+
+    it('Update - Email existing', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/employee/update')
+            .set('Authorization', token)
+            .query({ cod_funcionario: 1 })
+            .send({
+                nome: 'AAA',
+                email: 'julia-aparicio@afsn.com.br',
+                senha: '000000',
+                permissao: 1,
+            });
+
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toBe('Email já cadastrado');
     });
 
     it('FindAll empty', async () => {
@@ -147,7 +168,7 @@ describe('EmployeeController (e2e)', () => {
         expect(res.body.message).toBe('Não existe funcionários cadastrados');
     });
 
-    it('FindOne not found', async () => {
+    it('FindOne notFound', async () => {
         const res = await request(app.getHttpServer())
             .get('/api/v1/school/employee/findOne')
             .set('Authorization', token)

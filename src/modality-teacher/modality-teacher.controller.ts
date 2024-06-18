@@ -1,6 +1,17 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Patch,
+    Post,
+    Query,
+    UseGuards,
+} from '@nestjs/common';
 import { ModalityTeacherService } from './modality-teacher.service';
-import { ModalityTeacherDTO } from './dto/modality-teacher.dto';
+import {
+    ModalityTeacherDTO,
+    ModalityTeacherUpdateDTO,
+} from './dto/modality-teacher.dto';
 import { AuthGuard } from '../guards/auth.guard';
 
 @UseGuards(AuthGuard)
@@ -13,6 +24,17 @@ export class ModalityTeacherController {
     @Post('create')
     async create(@Body() data: ModalityTeacherDTO) {
         return await this.modalityTeacherService.create(data);
+    }
+
+    @Patch('update')
+    async update(
+        @Query('cod_modalidade_professor') cod_modalidade_professor: number,
+        @Body() data: ModalityTeacherUpdateDTO,
+    ) {
+        return await this.modalityTeacherService.update(
+            cod_modalidade_professor,
+            data,
+        );
     }
 
     @Get('findOne')
