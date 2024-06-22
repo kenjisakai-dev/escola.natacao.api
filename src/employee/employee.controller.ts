@@ -13,7 +13,10 @@ import { AuthGuard } from '../guards/auth.guard';
 import { PermissionsGuard } from '../guards/permission.guard';
 import { Permissions } from './decorator/permissions.decorator';
 import { Permission } from './enum/permission.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('employee')
 @Permissions(Permission.ADMIN)
 @UseGuards(AuthGuard, PermissionsGuard)
 @Controller('api/v1/school/employee')

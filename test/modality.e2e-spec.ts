@@ -62,6 +62,7 @@ describe('ModalityController (e2e)', () => {
     it('FindOne notFound', async () => {
         const res = await request(app.getHttpServer())
             .get('/api/v1/school/modality/findOne')
+            .set('Authorization', token)
             .query({ cod_modalidade: 1 });
 
         expect(res.statusCode).toBe(404);
@@ -71,6 +72,7 @@ describe('ModalityController (e2e)', () => {
     it('Create', async () => {
         const res = await request(app.getHttpServer())
             .post('/api/v1/school/modality/create')
+            .set('Authorization', token)
             .send({
                 descricao: 'Natação',
             });
@@ -86,6 +88,7 @@ describe('ModalityController (e2e)', () => {
     it('Create - Modality existing', async () => {
         const res = await request(app.getHttpServer())
             .post('/api/v1/school/modality/create')
+            .set('Authorization', token)
             .send({
                 descricao: 'Natação',
             });
@@ -97,6 +100,7 @@ describe('ModalityController (e2e)', () => {
     it('FindAll', async () => {
         const res = await request(app.getHttpServer())
             .get('/api/v1/school/modality/findAll')
+            .set('Authorization', token)
             .send();
 
         expect(res.statusCode).toBe(200);
@@ -144,6 +148,7 @@ describe('ModalityController (e2e)', () => {
     it('Update - Modality existing', async () => {
         const res = await request(app.getHttpServer())
             .patch('/api/v1/school/modality/update')
+            .set('Authorization', token)
             .query({ cod_modalidade: 1 })
             .send({
                 descricao: 'NATAÇÃO I',
@@ -156,6 +161,7 @@ describe('ModalityController (e2e)', () => {
     it('DTO', async () => {
         const res = await request(app.getHttpServer())
             .post('/api/v1/school/modality/create')
+            .set('Authorization', token)
             .send();
 
         expect(res.statusCode).toBe(400);

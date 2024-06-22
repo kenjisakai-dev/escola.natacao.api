@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+    Injectable,
+    CanActivate,
+    ExecutionContext,
+    ForbiddenException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PERMISSIONS_KEY } from '../employee/decorator/permissions.decorator';
 import { Permission } from '../employee/enum/permission.enum';
@@ -17,8 +22,12 @@ export class PermissionsGuard implements CanActivate {
         }
         const { employee } = context.switchToHttp().getRequest();
 
-        return permissions.some(
+        const permission = permissions.some(
             (permission) => permission === employee?.permissao,
         );
+
+        if (!permission) throw new ForbiddenException('Acesso não autorizado');
+
+        return true;
     }
 }

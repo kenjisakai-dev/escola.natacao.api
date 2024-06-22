@@ -10,9 +10,12 @@ import {
 import { TeamDTO, TeamUpdateDTO } from './dto/team.dto';
 import { TeamService } from './team.service';
 import { AuthGuard } from '../guards/auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('team')
 @UseGuards(AuthGuard)
-@Controller('api/v1/school/class')
+@Controller('api/v1/school/team')
 export class TeamController {
     constructor(private readonly teamService: TeamService) {}
 

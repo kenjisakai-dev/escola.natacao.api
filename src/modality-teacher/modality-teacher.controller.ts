@@ -13,7 +13,10 @@ import {
     ModalityTeacherUpdateDTO,
 } from './dto/modality-teacher.dto';
 import { AuthGuard } from '../guards/auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('modalityTeacher')
 @UseGuards(AuthGuard)
 @Controller('api/v1/school/modality/teacher')
 export class ModalityTeacherController {

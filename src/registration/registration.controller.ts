@@ -10,7 +10,10 @@ import {
 import { RegistrationDTO, RegistrationUpdateDTO } from './dto/registration.dto';
 import { RegistrationService } from './registration.service';
 import { AuthGuard } from '../guards/auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('registration')
 @UseGuards(AuthGuard)
 @Controller('api/v1/school/registration')
 export class RegistrationController {

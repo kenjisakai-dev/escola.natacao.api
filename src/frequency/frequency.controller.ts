@@ -10,7 +10,10 @@ import {
 import { FrequencyDTO, FrequencyUpdateDTO } from './dto/frequency.dto';
 import { FrequencyService } from './frequency.service';
 import { AuthGuard } from '../guards/auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('frequency')
 @UseGuards(AuthGuard)
 @Controller('api/v1/school/frequency')
 export class FrequencyController {

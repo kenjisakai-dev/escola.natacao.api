@@ -10,7 +10,10 @@ import {
 import { TeacherDTO, TeacherUpdateDTO } from './dto/teacher.dto';
 import { TeacherService } from './teacher.service';
 import { AuthGuard } from '../guards/auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('teacher')
 @UseGuards(AuthGuard)
 @Controller('api/v1/school/teacher')
 export class TeacherController {
