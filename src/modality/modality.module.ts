@@ -3,9 +3,10 @@ import { ModalityController } from './modality.controller';
 import { ModalityService } from './modality.service';
 import { PrismaModule } from '../../prisma/prisma.module';
 import { AuthModule } from '../auth/auth.module';
+import { EmployeeModule } from 'src/employee/employee.module';
 
 @Module({
-    imports: [PrismaModule, AuthModule],
+    imports: [PrismaModule, AuthModule, EmployeeModule],
     controllers: [ModalityController],
     providers: [ModalityService],
     exports: [ModalityService],

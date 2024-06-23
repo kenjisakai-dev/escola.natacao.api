@@ -85,4 +85,8 @@ export class EmployeeService {
 
         return employees;
     }
+
+    async existingEmployee() {
+        return await this.prismaService.funcionario.findMany();
+    }
 }
