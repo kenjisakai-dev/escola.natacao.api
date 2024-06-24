@@ -40,17 +40,9 @@ $ npm install -g dotenv-cli
 
 ## Executar o APP
 
-Crie um arquivo chamado .env e configure conforme seu banco de dados
+Crie um arquivo chamado .env e .env.test com as variáveis de ambiente e configurações do banco de dados igual do arquivo .env.example
 
-```json
-ENV="DEV"
-
-DATABASE_URL="banco://user:password@server:port/escola_natacao"
-JWT_SECRET="_ofNh{Ot>VG8g+R1r47j_b|eFfSR;:£"
-TOKEN_VALIDATOR_CPF="7903|nYW2w0qA9qkB3EBN9o1c13oQxhO7HbV5"
-
-PORT=3080
-```
+---
 
 ```bash
 # desenvolvimento
