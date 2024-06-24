@@ -16,7 +16,7 @@ export class TeacherDTO {
     @IsDefined({ message: 'Nome é obrigatório' })
     nome: string;
 
-    @ApiProperty({ example: 'fernanda.larissa@school.com.br' })
+    @ApiProperty({ example: '67783078893' })
     @Transform(({ value }) => value.toString())
     @Length(11, 11, {
         message: 'O CPF deve conter 11 números',

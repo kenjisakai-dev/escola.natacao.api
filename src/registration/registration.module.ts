@@ -5,7 +5,7 @@ import { PrismaModule } from '../../prisma/prisma.module';
 import { StudentModule } from '../student/student.module';
 import { AuthModule } from '../auth/auth.module';
 import { TeamModule } from '../team/team.module';
-import { EmployeeModule } from 'src/employee/employee.module';
+import { EmployeeModule } from '../employee/employee.module';
 
 @Module({
     imports: [

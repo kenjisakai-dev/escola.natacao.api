@@ -29,7 +29,13 @@
 ## Installation
 
 ```bash
+# Instalar as dependencias
 $ npm install
+```
+
+```bash
+# Instalar a CLI do dotenv globalmente (apontar para as variáveis de ambiente)
+$ npm install -g dotenv-cli
 ```
 
 ## Running the app
@@ -51,7 +57,7 @@ $ npm run start:prod
 # unit tests
 $ npm run test
 
-# e2e tests
+# Para executar testes e2e as importações devem estar com o caminho relativo
 $ npm run test:e2e
 
 # test coverage
@@ -64,9 +70,9 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+-   Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
+-   Website - [https://nestjs.com](https://nestjs.com/)
+-   Twitter - [@nestframework](https://twitter.com/nestframework)
 
 ## License
 

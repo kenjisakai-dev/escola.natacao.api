@@ -4,7 +4,7 @@ import { FrequencyController } from './frequency.controller';
 import { FrequencyService } from './frequency.service';
 import { AuthModule } from '../auth/auth.module';
 import { RegistrationModule } from '../registration/registration.module';
-import { EmployeeModule } from 'src/employee/employee.module';
+import { EmployeeModule } from '../employee/employee.module';
 
 @Module({
     imports: [PrismaModule, RegistrationModule, AuthModule, EmployeeModule],

@@ -91,7 +91,7 @@ describe('FrequencyController (e2e)', () => {
             });
 
         await request(app.getHttpServer())
-            .post('/api/v1/school/class/create')
+            .post('/api/v1/school/team/create')
             .set('Authorization', token)
             .send({
                 nome: 'Natação A2',
@@ -100,7 +100,7 @@ describe('FrequencyController (e2e)', () => {
             });
 
         await request(app.getHttpServer())
-            .post('/api/v1/school/class/create')
+            .post('/api/v1/school/team/create')
             .set('Authorization', token)
             .send({
                 nome: 'Hidroginástica A3',
@@ -134,7 +134,7 @@ describe('FrequencyController (e2e)', () => {
                 numero: '276',
             });
 
-        await request(app.getHttpServer())
+        const t = await request(app.getHttpServer())
             .post('/api/v1/school/registration/create')
             .set('Authorization', token)
             .send({
@@ -143,7 +143,9 @@ describe('FrequencyController (e2e)', () => {
                 cod_aluno: 1,
             });
 
-        await request(app.getHttpServer())
+        console.log(t.body.message);
+
+        const t2 = await request(app.getHttpServer())
             .post('/api/v1/school/registration/create')
             .set('Authorization', token)
             .send({
@@ -151,6 +153,8 @@ describe('FrequencyController (e2e)', () => {
                 cod_turma: 2,
                 cod_aluno: 2,
             });
+
+        console.log(t2.body.message);
     });
 
     it('FindAll empty', async () => {

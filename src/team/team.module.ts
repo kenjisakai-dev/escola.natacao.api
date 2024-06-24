@@ -4,7 +4,7 @@ import { TeamService } from './team.service';
 import { PrismaModule } from '../../prisma/prisma.module';
 import { ModalityTeacherModule } from '../modality-teacher/modality-teacher.module';
 import { AuthModule } from '../auth/auth.module';
-import { EmployeeModule } from 'src/employee/employee.module';
+import { EmployeeModule } from '../employee/employee.module';
 
 @Module({
     imports: [PrismaModule, ModalityTeacherModule, AuthModule, EmployeeModule],

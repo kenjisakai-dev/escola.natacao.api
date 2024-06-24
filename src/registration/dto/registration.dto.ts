@@ -30,7 +30,7 @@ export class RegistrationDTO {
 }
 
 export class RegistrationUpdateDTO extends PartialType(RegistrationDTO) {
-    @ApiProperty({ example: null })
+    @ApiProperty({ example: true })
     @Transform(({ value }) => Boolean(value))
     @IsBoolean({ message: 'O status do aluno deve ser passado nesse campo' })
     @IsOptional()

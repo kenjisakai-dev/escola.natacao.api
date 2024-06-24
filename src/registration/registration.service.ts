@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+    BadRequestException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { RegistrationDTO, RegistrationUpdateDTO } from './dto/registration.dto';
 import { StudentService } from '../student/student.service';
@@ -18,6 +22,8 @@ export class RegistrationService {
         await this.teamService.findOne(cod_turma);
         await this.studentService.findOne(cod_aluno);
 
+        await this.registrationExisting(cod_aluno, cod_turma);
+
         return await this.prismaService.matricula.create({
             data,
         });
@@ -35,6 +41,8 @@ export class RegistrationService {
         if (cod_turma) {
             await this.teamService.findOne(cod_turma);
         }
+
+        await this.registrationExisting(cod_aluno, cod_turma);
 
         return await this.prismaService.matricula.update({
             where: {
@@ -66,5 +74,18 @@ export class RegistrationService {
         }
 
         return registrations;
+    }
+
+    async registrationExisting(cod_aluno: number, cod_turma: number) {
+        const registration = await this.prismaService.matricula.findFirst({
+            where: {
+                cod_aluno,
+                cod_turma,
+            },
+        });
+
+        if (registration) {
+            throw new BadRequestException('Aluno já matriculado na turma');
+        }
     }
 }

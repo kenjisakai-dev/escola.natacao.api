@@ -24,15 +24,15 @@ async function bootstrap() {
             type: 'http',
             in: 'Header',
         })
+        .addTag('employee')
         .addTag('auth')
         .addTag('student')
-        .addTag('modality')
         .addTag('teacher')
+        .addTag('modality')
         .addTag('modalityTeacher')
-        .addTag('registration')
         .addTag('team')
+        .addTag('registration')
         .addTag('frequency')
-        .addTag('employee')
         .build();
 
     const document = SwaggerModule.createDocument(app, config);

@@ -91,7 +91,7 @@ describe('RegistrationController (e2e)', () => {
             });
 
         await request(app.getHttpServer())
-            .post('/api/v1/school/class/create')
+            .post('/api/v1/school/team/create')
             .set('Authorization', token)
             .send({
                 nome: 'Natação A2',
@@ -100,7 +100,7 @@ describe('RegistrationController (e2e)', () => {
             });
 
         await request(app.getHttpServer())
-            .post('/api/v1/school/class/create')
+            .post('/api/v1/school/team/create')
             .set('Authorization', token)
             .send({
                 nome: 'Hidroginástica A3',
@@ -203,6 +203,20 @@ describe('RegistrationController (e2e)', () => {
         expect(res.body.message).toBe('Turma não encontrada');
     });
 
+    it('Create - Registration existing', async () => {
+        const res = await request(app.getHttpServer())
+            .post('/api/v1/school/registration/create')
+            .set('Authorization', token)
+            .send({
+                data_matricula: '2024-06-07',
+                cod_turma: 1,
+                cod_aluno: 1,
+            });
+
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toBe('Aluno já matriculado na turma');
+    });
+
     it('FindAll', async () => {
         const res = await request(app.getHttpServer())
             .get('/api/v1/school/registration/findAll')
@@ -285,6 +299,21 @@ describe('RegistrationController (e2e)', () => {
 
         expect(res.statusCode).toBe(404);
         expect(res.body.message).toBe('Turma não encontrada');
+    });
+
+    it('Update - Registration existing', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/registration/update')
+            .set('Authorization', token)
+            .query({ cod_matricula: 1 })
+            .send({
+                data_matricula: '2024-06-07',
+                cod_turma: 2,
+                cod_aluno: 2,
+            });
+
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toBe('Aluno já matriculado na turma');
     });
 
     it('DTO', async () => {

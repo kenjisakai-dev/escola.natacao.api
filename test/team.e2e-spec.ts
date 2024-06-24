@@ -93,7 +93,7 @@ describe('TeamController (e2e)', () => {
 
     it('FindAll empty', async () => {
         const res = await request(app.getHttpServer())
-            .get('/api/v1/school/class/findAll')
+            .get('/api/v1/school/team/findAll')
             .set('Authorization', token)
             .send();
 
@@ -103,7 +103,7 @@ describe('TeamController (e2e)', () => {
 
     it('FindOne notFound', async () => {
         const res = await request(app.getHttpServer())
-            .get('/api/v1/school/class/findOne')
+            .get('/api/v1/school/team/findOne')
             .set('Authorization', token)
             .query({ cod_turma: 1 });
 
@@ -113,7 +113,7 @@ describe('TeamController (e2e)', () => {
 
     it('Create', async () => {
         const res = await request(app.getHttpServer())
-            .post('/api/v1/school/class/create')
+            .post('/api/v1/school/team/create')
             .set('Authorization', token)
             .send({
                 nome: 'Natação A2',
@@ -133,7 +133,7 @@ describe('TeamController (e2e)', () => {
 
     it('Create - Cod-modality-teacher notFound', async () => {
         const res = await request(app.getHttpServer())
-            .post('/api/v1/school/class/create')
+            .post('/api/v1/school/team/create')
             .set('Authorization', token)
             .send({
                 nome: 'AAA',
@@ -149,7 +149,7 @@ describe('TeamController (e2e)', () => {
 
     it('FindAll', async () => {
         const res = await request(app.getHttpServer())
-            .get('/api/v1/school/class/findAll')
+            .get('/api/v1/school/team/findAll')
             .set('Authorization', token)
             .send();
 
@@ -167,7 +167,7 @@ describe('TeamController (e2e)', () => {
 
     it('FindOne', async () => {
         const res = await request(app.getHttpServer())
-            .get('/api/v1/school/class/findOne')
+            .get('/api/v1/school/team/findOne')
             .set('Authorization', token)
             .query({ cod_turma: 1 });
 
@@ -183,7 +183,7 @@ describe('TeamController (e2e)', () => {
 
     it('Update', async () => {
         const res = await request(app.getHttpServer())
-            .patch('/api/v1/school/class/update')
+            .patch('/api/v1/school/team/update')
             .set('Authorization', token)
             .query({ cod_turma: 1 })
             .send({
@@ -203,7 +203,7 @@ describe('TeamController (e2e)', () => {
 
     it('Update - Cod-modality-teacher notFound', async () => {
         const res = await request(app.getHttpServer())
-            .post('/api/v1/school/class/create')
+            .post('/api/v1/school/team/create')
             .set('Authorization', token)
             .query({ cod_turma: 1 })
             .send({
@@ -220,7 +220,7 @@ describe('TeamController (e2e)', () => {
 
     it('DTO', async () => {
         const res = await request(app.getHttpServer())
-            .post('/api/v1/school/class/create')
+            .post('/api/v1/school/team/create')
             .set('Authorization', token)
             .send();
 

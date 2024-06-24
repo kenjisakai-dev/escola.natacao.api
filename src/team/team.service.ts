@@ -23,6 +23,8 @@ export class TeamService {
     async update(cod_turma: number, data: TeamUpdateDTO) {
         const { cod_modalidade_professor } = data;
 
+        await this.findOne(cod_turma);
+
         if (cod_modalidade_professor) {
             await this.modalityTeacher.findOne(cod_modalidade_professor);
         }
