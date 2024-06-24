@@ -5,7 +5,7 @@
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
+  <p align="center">O NestJS é um frameword do <a href="http://nodejs.org" target="_blank">NodeJS</a> utilizado para construir aplicativos do lado do servidor eficientes e escalonáveis.</p>
     <p align="center">
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
@@ -24,44 +24,67 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Estrutura inicial do [NestJS](https://github.com/nestjs/nest).
 
-## Installation
+## Instalação
 
 ```bash
-# Instalar as dependencias
+# Instale as dependencias
 $ npm install
 ```
 
 ```bash
-# Instalar a CLI do dotenv globalmente (apontar para as variáveis de ambiente)
+# Instale a CLI do dotenv globalmente (utilizado para fazer os apontamento das variáveis de ambiente)
 $ npm install -g dotenv-cli
 ```
 
-## Running the app
+## Executar o APP
 
-```bash
-# development
-$ npm run start
+Crie um arquivo chamado .env e configure conforme seu banco de dados
 
-# watch mode
-$ npm run start:dev
+```json
+ENV="DEV"
 
-# production mode
-$ npm run start:prod
+DATABASE_URL="banco://user:password@server:port/escola_natacao"
+JWT_SECRET="_ofNh{Ot>VG8g+R1r47j_b|eFfSR;:£"
+TOKEN_VALIDATOR_CPF="7903|nYW2w0qA9qkB3EBN9o1c13oQxhO7HbV5"
+
+PORT=3080
 ```
 
-## Test
+```bash
+# desenvolvimento
+$ npm run start
+
+# Executar em desenvolvimento
+$ npm run dev
+
+# Executar em produção
+$ npm run prd
+```
+
+## Testes
 
 ```bash
-# unit tests
+# Executar testes unitários
 $ npm run test
 
-# Para executar testes e2e as importações devem estar com o caminho relativo
+# Executar testes e2e
 $ npm run test:e2e
 
-# test coverage
+# Executar testes de cobertura
 $ npm run test:cov
+```
+
+## Documentação Swagger
+
+```bash
+# Inicie o APP
+$ npm run dev
+
+# URL para acessar a documentação swagger
+$ http://localhost:port/swagger
+
 ```
 
 ## Support
