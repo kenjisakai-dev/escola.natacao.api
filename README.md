@@ -80,7 +80,6 @@ $ npm run dev
 
 # URL para acessar a documentação swagger
 $ http://localhost:port/swagger
-
 ```
 
 ## Support
