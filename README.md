@@ -28,7 +28,7 @@ Estrutura inicial do [NestJS](https://github.com/nestjs/nest).
 
 ## Modelo relacional
 
-![modelo](modelo-relacional-escola-natacao.png)
+![modelo](docs/modelo-relacional-escola-natacao.png)
 
 ## Instalação
 
