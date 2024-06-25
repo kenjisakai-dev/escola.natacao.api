@@ -273,6 +273,22 @@ describe('RegistrationController (e2e)', () => {
         });
     });
 
+    it('Update - non-existent registration', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/registration/update')
+            .set('Authorization', token)
+            .query({ cod_matricula: 1000 })
+            .send({
+                data_matricula: '2024-06-06',
+                cod_turma: 2,
+                cod_aluno: 2,
+                status: false,
+            });
+
+        expect(res.statusCode).toBe(404);
+        expect(res.body.message).toBe('Matricula não encontrada');
+    });
+
     it('Update - Student notFound ', async () => {
         const res = await request(app.getHttpServer())
             .patch('/api/v1/school/registration/update')

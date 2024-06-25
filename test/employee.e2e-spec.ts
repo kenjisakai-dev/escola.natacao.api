@@ -140,6 +140,22 @@ describe('EmployeeController (e2e)', () => {
         expect(res.body.status).toBe(false);
     });
 
+    it('Update - non-existent employee', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/employee/update')
+            .set('Authorization', token)
+            .query({ cod_funcionario: 1000 })
+            .send({
+                nome: 'AAA',
+                email: 'julia-aparicio@afsn.com.br',
+                senha: '000000',
+                permissao: 1,
+            });
+
+        expect(res.statusCode).toBe(404);
+        expect(res.body.message).toBe('Funcionário não encontrado');
+    });
+
     it('Update - Email existing', async () => {
         const res = await request(app.getHttpServer())
             .patch('/api/v1/school/employee/update')

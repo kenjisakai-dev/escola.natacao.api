@@ -258,6 +258,22 @@ describe('StudentController (e2e)', () => {
         });
     });
 
+    it('Update - non-existent student', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/student/update')
+            .set('Authorization', token)
+            .query({ cod_aluno: 1000 })
+            .send({
+                cpf: '77612538890',
+                cep: '06090020',
+                numero: '276',
+                status: false,
+            });
+
+        expect(res.statusCode).toBe(404);
+        expect(res.body.message).toBe('Aluno não encontrado');
+    });
+
     it('Update - CPF Existing', async () => {
         const res = await request(app.getHttpServer())
             .patch('/api/v1/school/student/update')

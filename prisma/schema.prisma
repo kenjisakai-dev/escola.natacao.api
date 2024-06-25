@@ -82,7 +82,7 @@ model matricula {
 model frequencia {
   cod_frequencia Int       @id @default(autoincrement()) @db.UnsignedInt
   data_aula      DateTime  @db.Date
-  presenca       Int       @db.TinyInt
+  presenca       Boolean   @default(true)
   cod_matricula  Int       @db.UnsignedInt
   matricula      matricula @relation(fields: [cod_matricula], references: [cod_matricula], onDelete: NoAction, onUpdate: NoAction, map: "cod_matricula_FK")
 

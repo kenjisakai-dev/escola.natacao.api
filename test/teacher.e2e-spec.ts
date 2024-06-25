@@ -180,6 +180,23 @@ describe('TeacherController (e2e)', () => {
         });
     });
 
+    it('Update - non-existent teacher', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/teacher/update')
+            .set('Authorization', token)
+            .query({ cod_professor: 1000 })
+            .send({
+                nome: 'Heloisa Heloisa Elza',
+                cpf: '91908933879',
+                telefone: '11994339691',
+                data_admissao: '2024-06-04',
+                status: false,
+            });
+
+        expect(res.statusCode).toBe(404);
+        expect(res.body.message).toBe('Professor não encontrado');
+    });
+
     it('Update - CPF Existing', async () => {
         const res = await request(app.getHttpServer())
             .patch('/api/v1/school/teacher/update')

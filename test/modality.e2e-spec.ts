@@ -145,6 +145,20 @@ describe('ModalityController (e2e)', () => {
         });
     });
 
+    it('Update - non-existent modality', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/modality/update')
+            .set('Authorization', token)
+            .query({ cod_modalidade: 1000 })
+            .send({
+                descricao: 'Natação I',
+                status: false,
+            });
+
+        expect(res.statusCode).toBe(404);
+        expect(res.body.message).toBe('Modalidade não encontrada');
+    });
+
     it('Update - Modality existing', async () => {
         const res = await request(app.getHttpServer())
             .patch('/api/v1/school/modality/update')

@@ -68,6 +68,8 @@ export class StudentService {
             status,
         } = data;
 
+        await this.findOne(cod_aluno);
+
         if (cpf) {
             await this.checkingCPF(cpf);
         }

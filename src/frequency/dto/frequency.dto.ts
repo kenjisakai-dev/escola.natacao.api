@@ -1,6 +1,6 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsDate, IsDefined, IsOptional } from 'class-validator';
+import { IsBoolean, IsDate, IsDefined, IsOptional } from 'class-validator';
 
 export class FrequencyDTO {
     @ApiProperty({ example: '2024-06-30' })
@@ -12,9 +12,10 @@ export class FrequencyDTO {
     data_aula: Date;
 
     @ApiProperty({ example: true })
-    @Transform(({ value }) => (value === true ? 1 : 0))
+    @Transform(({ value }) => Boolean(value))
+    @IsBoolean({ message: 'A presença deve ser passada nesse campo' })
     @IsDefined({ message: 'A presença é obrigatória' })
-    presenca: number;
+    presenca: boolean;
 
     @ApiProperty({ example: 1 })
     @Transform(({ value }) => Number(value))

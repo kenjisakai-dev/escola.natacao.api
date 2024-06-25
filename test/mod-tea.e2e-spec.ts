@@ -210,6 +210,23 @@ describe('ModalityTeacherController (e2e)', () => {
         });
     });
 
+    it('Update - non-existent mod_tea', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/modality/teacher/update')
+            .set('Authorization', token)
+            .query({ cod_modalidade_professor: 1000 })
+            .send({
+                cod_modalidade: 2,
+                cod_professor: 1,
+                status: false,
+            });
+
+        expect(res.statusCode).toBe(404);
+        expect(res.body.message).toBe(
+            'Registro do professor na Modalidade não encontrado',
+        );
+    });
+
     it('Update - Modality notFound', async () => {
         const res = await request(app.getHttpServer())
             .patch('/api/v1/school/modality/teacher/update')

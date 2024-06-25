@@ -26,6 +26,10 @@
 
 Estrutura inicial do [NestJS](https://github.com/nestjs/nest).
 
+## Modelo relacional
+
+![modelo](modelo-relacional-escola-natacao.png)
+
 ## Instalação
 
 ```bash
@@ -34,7 +38,7 @@ $ npm install
 ```
 
 ```bash
-# Instale a CLI do dotenv globalmente (utilizado para fazer os apontamento das variáveis de ambiente)
+# Instale a CLI do dotenv globalmente
 $ npm install -g dotenv-cli
 ```
 

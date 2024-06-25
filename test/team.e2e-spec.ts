@@ -201,6 +201,20 @@ describe('TeamController (e2e)', () => {
         });
     });
 
+    it('Update - non-existent team', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/team/update')
+            .set('Authorization', token)
+            .query({ cod_turma: 1000 })
+            .send({
+                cod_modalidade_professor: 2,
+                status: false,
+            });
+
+        expect(res.statusCode).toBe(404);
+        expect(res.body.message).toBe('Turma não encontrada');
+    });
+
     it('Update - Cod-modality-teacher notFound', async () => {
         const res = await request(app.getHttpServer())
             .post('/api/v1/school/team/create')

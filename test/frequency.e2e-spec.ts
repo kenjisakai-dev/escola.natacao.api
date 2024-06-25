@@ -134,7 +134,7 @@ describe('FrequencyController (e2e)', () => {
                 numero: '276',
             });
 
-        const t = await request(app.getHttpServer())
+        await request(app.getHttpServer())
             .post('/api/v1/school/registration/create')
             .set('Authorization', token)
             .send({
@@ -143,9 +143,7 @@ describe('FrequencyController (e2e)', () => {
                 cod_aluno: 1,
             });
 
-        console.log(t.body.message);
-
-        const t2 = await request(app.getHttpServer())
+        await request(app.getHttpServer())
             .post('/api/v1/school/registration/create')
             .set('Authorization', token)
             .send({
@@ -153,8 +151,6 @@ describe('FrequencyController (e2e)', () => {
                 cod_turma: 2,
                 cod_aluno: 2,
             });
-
-        console.log(t2.body.message);
     });
 
     it('FindAll empty', async () => {
@@ -193,7 +189,7 @@ describe('FrequencyController (e2e)', () => {
         expect(res.body).toStrictEqual({
             cod_frequencia: 1,
             data_aula: '2024-06-10T00:00:00.000Z',
-            presenca: 1,
+            presenca: true,
             cod_matricula: 1,
         });
     });
@@ -209,7 +205,7 @@ describe('FrequencyController (e2e)', () => {
             {
                 cod_frequencia: 1,
                 data_aula: '2024-06-10T00:00:00.000Z',
-                presenca: 1,
+                presenca: true,
                 cod_matricula: 1,
             },
         ]);
@@ -225,7 +221,7 @@ describe('FrequencyController (e2e)', () => {
         expect(res.body).toStrictEqual({
             cod_frequencia: 1,
             data_aula: '2024-06-10T00:00:00.000Z',
-            presenca: 1,
+            presenca: true,
             cod_matricula: 1,
         });
     });
@@ -237,7 +233,7 @@ describe('FrequencyController (e2e)', () => {
             .query({ cod_frequencia: 1 })
             .send({
                 data_aula: '2024-06-11',
-                presenca: 0,
+                presenca: false,
                 cod_matricula: 2,
             });
 
@@ -245,9 +241,24 @@ describe('FrequencyController (e2e)', () => {
         expect(res.body).toStrictEqual({
             cod_frequencia: 1,
             data_aula: '2024-06-11T00:00:00.000Z',
-            presenca: 0,
+            presenca: false,
             cod_matricula: 2,
         });
+    });
+
+    it('Update - non-existent frequency', async () => {
+        const res = await request(app.getHttpServer())
+            .patch('/api/v1/school/frequency/update')
+            .set('Authorization', token)
+            .query({ cod_frequencia: 1000 })
+            .send({
+                data_aula: '2024-06-11',
+                presenca: false,
+                cod_matricula: 2,
+            });
+
+        expect(res.statusCode).toBe(404);
+        expect(res.body.message).toBe('Registro da frequencia não encontrado');
     });
 
     it('DTO', async () => {
@@ -259,6 +270,7 @@ describe('FrequencyController (e2e)', () => {
         expect(res.statusCode).toBe(400);
         expect(res.body.message).toStrictEqual([
             'A presença é obrigatória',
+            'A presença deve ser passada nesse campo',
             'Código da matricula é obrigatório',
         ]);
     });
