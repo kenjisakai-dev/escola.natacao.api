@@ -6,8 +6,9 @@
     "private": true,
     "license": "UNLICENSED",
     "scripts": {
+        "prebuild": "npm run lint && npm run format",
         "build": "nest build",
-        "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+        "format": "prettier --write \"src/**/*.ts\"",
         "start": "nest start",
         "dev": "nest start --watch",
         "debug": "nest start --debug --watch",
