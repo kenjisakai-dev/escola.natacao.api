@@ -1,6 +1,14 @@
 node_modules
 dist
 docs
+.vscode
 test
+.prettierignore
+.dockerignore
+.gitignore
+package-lock.json
+README.md
+
 .env.example
+.env.dev
 .env.test

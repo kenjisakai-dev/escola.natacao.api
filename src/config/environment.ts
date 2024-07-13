@@ -1,8 +1,21 @@
 import * as dotenv from 'dotenv';
 
 dotenv.config({
-    path: process.env.ENV === 'TEST' ? '.env.test' : '.env',
+    path: loadEnvironment(),
 });
+
+function loadEnvironment() {
+    const env = process.env.ENV;
+
+    switch (env) {
+        case 'TEST':
+            return '.env.test';
+        case 'PRD':
+            return '.env';
+        default:
+            return '.env.dev';
+    }
+}
 
 export default {
     database_url: process.env.DATABASE_URL,

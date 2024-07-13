@@ -2,7 +2,7 @@ FROM node:alpine
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY package.json ./
 
 RUN npm install
 RUN npm i -g @nestjs/cli
@@ -12,9 +12,8 @@ RUN npm i @prisma/client
 COPY . .
 
 RUN npx prisma generate
+RUN npm run build
 
 EXPOSE 3372
 
-# RUN npm run build
-
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start:prod"]
