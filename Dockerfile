@@ -8,7 +8,8 @@ RUN npm install
 RUN npm i -g @nestjs/cli
 RUN npm i -D prisma
 RUN npm i @prisma/client
-RUN npm i dotenv
+RUN npm install -g dotenv-cli
+
 
 COPY . .
 
