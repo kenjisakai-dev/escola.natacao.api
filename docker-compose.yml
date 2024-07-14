@@ -13,7 +13,7 @@ services:
     image: mysql:latest
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: "Kenji@123"
+      MYSQL_ROOT_PASSWORD: "4m^Hi5631=P%"
     ports:
       - 3306:3306
     volumes:
