@@ -7,8 +7,6 @@ services:
     build: ./
     ports:
       - 3372:3372
-    environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD:
     command: ./docker-entrypoint.sh
 
   database:
