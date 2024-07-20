@@ -9,6 +9,5 @@ test
 package-lock.json
 README.md
 
-.env.example
 .env.dev
 .env.test

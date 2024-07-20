@@ -21,8 +21,11 @@
         "pretest:e2e": "cls && dotenv -e .env.test -- npm run db:down && dotenv -e .env.test -- npm run db:up",
         "test:e2e": "dotenv -e .env.test -- jest --config ./test/jest-e2e.json",
         "test:e2e:all": "npm run test:e2e -t employee && npm run test:e2e -t auth && npm run test:e2e -t student && npm run test:e2e -t teacher && npm run test:e2e -t modality && npm run test:e2e -t mod-tea && npm run test:e2e -t team && npm run test:e2e -t registration && npm run test:e2e -t frequency",
-        "db:up": "dotenv -e .env.dev -- prisma db push",
-        "db:down": "dotenv -e .env.dev -- prisma migrate reset --force"
+        "db:up:dev": "dotenv -e .env.dev -- prisma db push",
+        "db:down:dev": "dotenv -e .env.dev -- prisma migrate reset --force",
+        "db:up:prd": "dotenv -e .env -- prisma db push",
+        "db:down:prd": "dotenv -e .env -- prisma migrate reset --force",
+        "db:generate": "prisma generate"
     },
     "dependencies": {
         "@nestjs/common": "^10.0.0",
