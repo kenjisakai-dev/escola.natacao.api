@@ -8,6 +8,7 @@ import { RegistrationModule } from './registration/registration.module';
 import { FrequencyModule } from './frequency/frequency.module';
 import { AuthModule } from './auth/auth.module';
 import { EmployeeModule } from './employee/employee.module';
+import { EntrypointModule } from './entrypoint/entrypoint.module';
 
 @Module({
     imports: [
@@ -20,6 +21,7 @@ import { EmployeeModule } from './employee/employee.module';
         FrequencyModule,
         AuthModule,
         EmployeeModule,
+        EntrypointModule,
     ],
 })
 export class AppModule {}
